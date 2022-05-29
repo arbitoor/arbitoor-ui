@@ -617,9 +617,6 @@
   dependencies:
     "@chakra-ui/utils" "2.0.0"
 
-"@comethq/comet-sdk@../comet":
-  version "1.0.0"
-
 "@ctrl/tinycolor@^3.4.0":
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/@ctrl/tinycolor/-/tinycolor-3.4.1.tgz#75b4c27948c81e88ccd3a8902047bcd797f38d32"
@@ -1321,6 +1318,11 @@ color-name@~1.1.4:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/color-name/-/color-name-1.1.4.tgz#c2a09a87acbde69543de6f63fa3995c826c536a2"
   integrity sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==
+
+comet-sdk@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/comet-sdk/-/comet-sdk-1.0.1.tgz#ee3a55f53c76ebab01b5ea3819531e5af917a268"
+  integrity sha512-0C1vqERMas31Iryc01Y5Dydf+AH+QjJcbeexuFnC2gCqueW58qJlUg3cSlPAAsvbBD6vQcWJUK0AiH1CxyLVug==
 
 compute-scroll-into-view@1.0.14:
   version "1.0.14"

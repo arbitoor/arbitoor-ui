@@ -15,7 +15,7 @@ import {
   Comet,
   EstimateSwapView,
   getExpectedOutputFromActions,
-} from '@comethq/comet-sdk';
+} from 'comet-sdk';
 import BigNumber from 'bignumber.js';
 import { debounce } from '../../utils/helpers';
 import LoadingBestPrice from '../BestPrice/LoadingBestPrice';

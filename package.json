@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^2.0.0",
-    "@comethq/comet-sdk": "../comet",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
@@ -23,6 +22,7 @@
     "@near-wallet-selector/near-wallet": "file:lib-dist/near-wallet-selector-near-wallet-v3.1.0.tgz",
     "@near-wallet-selector/sender": "file:lib-dist/near-wallet-selector-sender-v3.1.0.tgz",
     "bignumber.js": "^9.0.2",
+    "comet-sdk": "^1.0.1",
     "framer-motion": "^6",
     "near-api-js": "^0.44.2",
     "next": "12.1.6",
