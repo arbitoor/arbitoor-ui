@@ -1,0 +1,41 @@
+{
+  "name": "near-swap",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^2.0.0",
+    "@comethq/comet-sdk": "../comet",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
+    "@fortawesome/fontawesome-svg-core": "^6.1.1",
+    "@fortawesome/free-regular-svg-icons": "^6.1.1",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
+    "@fortawesome/react-fontawesome": "^0.1.18",
+    "@near-wallet-selector/core": "file:lib-dist/near-wallet-selector-core-v3.1.0.tgz",
+    "@near-wallet-selector/ledger": "file:lib-dist/near-wallet-selector-ledger-v3.1.0.tgz",
+    "@near-wallet-selector/math-wallet": "file:lib-dist/near-wallet-selector-math-wallet-v3.1.0.tgz",
+    "@near-wallet-selector/near-wallet": "file:lib-dist/near-wallet-selector-near-wallet-v3.1.0.tgz",
+    "@near-wallet-selector/sender": "file:lib-dist/near-wallet-selector-sender-v3.1.0.tgz",
+    "bignumber.js": "^9.0.2",
+    "framer-motion": "^6",
+    "near-api-js": "^0.44.2",
+    "next": "12.1.6",
+    "react": "18.1.0",
+    "react-dom": "18.1.0",
+    "zustand": "^4.0.0-rc.1"
+  },
+  "devDependencies": {
+    "@types/node": "17.0.34",
+    "@types/react": "18.0.9",
+    "@types/react-dom": "18.0.4",
+    "eslint": "8.15.0",
+    "eslint-config-next": "12.1.6",
+    "typescript": "4.6.4"
+  }
+}

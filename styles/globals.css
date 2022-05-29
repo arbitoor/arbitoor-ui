@@ -1,0 +1,31 @@
+html,
+#__next {
+  height: 100%;
+  min-height: 100vh;
+  background-image: linear-gradient(155deg, #202020 20%, #000 180%) !important;
+}
+* {
+  outline: 0 none !important;
+  font-family: Inter, sans-serif !important;
+  box-sizing: border-box;
+}
+
+body {
+  /* background: #f3f5f6 !important; */
+  background: #000 !important;
+  /* background-image: linear-gradient(155deg, #202020 20%, #000 180%) !important; */
+  min-height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+li {
+  list-style: none;
+}
+ul {
+  padding: 0;
+}
