@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { Flex, Box, Button } from '@chakra-ui/react';
 import NavLinks from '../NavLinks';
@@ -11,15 +11,15 @@ import AccountDetails from '../AccountDetails/AccountDetails';
 import Sidebar from '../Sidebar/Sidebar';
 
 function Navbar() {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const { selector, modal, authKey } = useWalletSelector();
 
-  const { selector } = useWalletSelector();
+  const [isOpen, setIsOpen] = React.useState(false);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
   const handleSignIn = () => {
-    selector.show();
+    modal.show();
   };
 
   return (
@@ -54,7 +54,7 @@ function Navbar() {
         justifyContent="flex-end"
         display={['none', 'none', 'none', 'flex']}
       >
-        {selector.isSignedIn() ? (
+        {authKey ? (
           <AccountDetails />
         ) : (
           <CustomButton
