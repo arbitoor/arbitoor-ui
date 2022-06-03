@@ -224,7 +224,6 @@ function SwapContent() {
   function tokenSwitchHandler() {
     setPayToken(receiveToken);
     setReceiveToken(payToken);
-    memoizedFetcher(inputAmount);
   }
 
   function handleInputChange(evt: any) {
