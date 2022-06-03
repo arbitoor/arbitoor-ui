@@ -5,13 +5,20 @@ import { faPowerOff } from '@fortawesome/free-solid-svg-icons';
 import { useWalletSelector } from '../../hooks/WalletSelectorContext';
 
 function Signout() {
-  const { selector } = useWalletSelector();
+  const { selector, setAuthKey } = useWalletSelector();
 
-  function handleSignOut() {
-    selector.signOut().catch((err) => {
+  async function handleSignOut() {
+    // selector.signOut().catch((err) => {
+    //   console.log('Failed to sign out');
+    //   console.error(err);
+    // });
+    const wallet = await selector.wallet();
+
+    wallet.signOut().catch((err) => {
       console.log('Failed to sign out');
       console.error(err);
     });
+    setAuthKey(null);
   }
   return (
     <Box onClick={handleSignOut} cursor="pointer">

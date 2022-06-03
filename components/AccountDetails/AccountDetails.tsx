@@ -6,9 +6,7 @@ import { useWalletSelector } from '../../hooks/WalletSelectorContext';
 import Signout from './Signout';
 
 function AccountDetails() {
-  const { accountId } = useWalletSelector();
-
-  
+  const { authKey } = useWalletSelector();
 
   return (
     <Flex
@@ -36,7 +34,7 @@ function AccountDetails() {
         textOverflow="ellipsis"
         color="whitesmoke"
       >
-        <Text>{accountId}</Text>
+        <Text>{authKey?.accountId}</Text>
       </Box>
       <Flex minWidth="36px" justifyContent="center">
         <Signout />
