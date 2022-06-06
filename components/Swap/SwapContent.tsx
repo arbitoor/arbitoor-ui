@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Flex, Box, Input } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { providers } from 'near-api-js';
+
 import { faSliders, faRotateRight } from '@fortawesome/free-solid-svg-icons';
 import TokenList from '../TokenList/TokenList';
 import ToggleToken from '../ToggleToken/ToggleToken';
@@ -21,6 +22,7 @@ import _ from 'lodash';
 // import { debounce } from '../../utils/helpers';
 import LoadingBestPrice from '../BestPrice/LoadingBestPrice';
 import { Transaction } from '@near-wallet-selector/core';
+import type { CodeResult } from 'near-api-js/lib/providers/provider';
 
 export interface SwapRoute {
   output: string;
@@ -59,6 +61,9 @@ function getRoutePath(actions: EstimateSwapView[]) {
 function SwapContent() {
   const [payToken, setPayToken] = useState<Token>(tokenList[0]);
   const [receiveToken, setReceiveToken] = useState<Token>(tokenList[1]);
+  const [userPayTokenBalance, setUserPayTokenBalance] = useState<string>('');
+  const [userReceiveTokenBalance, setUserReceiveTokenBalance] =
+    useState<string>('');
   const [inputAmount, setInputAmount] = useState<string>('');
   const [paths, setPaths] = useState<RouteInfo[]>();
   const [transactionPayload, setTransactionPayload] = useState<Transaction[]>();
@@ -66,7 +71,7 @@ function SwapContent() {
   const [loading, setLoading] = useState<boolean>();
   // TODO Remove placeholder routes on the UI. Display generated path once 'routes' is set
   const [routes, setRoutes] = useState<SwapRoute[]>();
-  const { selector, modal, authKey } = useWalletSelector();
+  const { selector, modal, authKey, accountId } = useWalletSelector();
 
   useEffect(() => {
     if (inputAmount !== '') {
@@ -83,6 +88,55 @@ function SwapContent() {
   );
 
   const fetcherWithDebounce = _.debounce(findRoutes, 1000);
+
+  useEffect(() => {
+    getTokenBalance();
+  }, [payToken, receiveToken]);
+
+  async function getTokenBalance() {
+    const { network } = selector.options;
+    const provider = new providers.JsonRpcProvider({
+      url: network.nodeUrl,
+    });
+
+    try {
+      const getPaytokenBalance = await provider.query<CodeResult>({
+        request_type: 'call_function',
+        account_id: payToken.id,
+        method_name: 'ft_balance_of',
+        args_base64: Buffer.from(
+          JSON.stringify({ account_id: accountId })
+        ).toString('base64'),
+        finality: 'optimistic',
+      });
+      const userPayTokenBalance = JSON.parse(
+        Buffer.from(getPaytokenBalance.result).toString()
+      );
+      const resultPay = (
+        userPayTokenBalance * Math.pow(10, -payToken.decimals)
+      ).toFixed(4);
+      setUserPayTokenBalance(resultPay);
+
+      const getReceivetokenBalance = await provider.query<CodeResult>({
+        request_type: 'call_function',
+        account_id: receiveToken.id,
+        method_name: 'ft_balance_of',
+        args_base64: Buffer.from(
+          JSON.stringify({ account_id: accountId })
+        ).toString('base64'),
+        finality: 'optimistic',
+      });
+      const userReceiveTokenBalance = JSON.parse(
+        Buffer.from(getReceivetokenBalance.result).toString()
+      );
+      const resultReceive = (
+        userReceiveTokenBalance * Math.pow(10, -receiveToken.decimals)
+      ).toFixed(4);
+      setUserReceiveTokenBalance(resultReceive);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   async function findRoutes(input: string) {
     if (input && payToken && receiveToken && selector) {
@@ -101,6 +155,7 @@ function SwapContent() {
         // const provider = new providers.JsonRpcProvider({
         //   url: selector.network.nodeUrl,
         // });
+
         const comet = new Comet({
           provider,
           user: localStorage.getItem('accountId')!,
@@ -280,7 +335,7 @@ function SwapContent() {
             />
           </Box>
         </Flex>
-        <SwapSide swapSide="pay" balanceAmount={10} />
+        <SwapSide swapSide="pay" balanceAmount={userPayTokenBalance} />
         <Box
           paddingX="14px"
           backgroundColor="#101010"
@@ -310,7 +365,10 @@ function SwapContent() {
 
         <ToggleToken handleTokenSwitch={tokenSwitchHandler} />
         <Box>
-          <SwapSide swapSide="receive" balanceAmount={1} />
+          <SwapSide
+            swapSide="receive"
+            balanceAmount={userReceiveTokenBalance}
+          />
 
           <TokenList selectToken={selectReceiveToken} token={receiveToken} />
           {loading || !paths?.length ? (
