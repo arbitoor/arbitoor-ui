@@ -3,7 +3,7 @@ import { Flex, Text, chakra, Box } from '@chakra-ui/react';
 
 interface Props {
   swapSide: string;
-  balanceAmount: number;
+  balanceAmount: string;
 }
 
 function SwapSide({ swapSide, balanceAmount }: Props) {

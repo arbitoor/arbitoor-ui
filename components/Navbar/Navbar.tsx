@@ -11,7 +11,7 @@ import AccountDetails from '../AccountDetails/AccountDetails';
 import Sidebar from '../Sidebar/Sidebar';
 
 function Navbar() {
-  const { selector, modal, authKey } = useWalletSelector();
+  const { modal, authKey } = useWalletSelector();
 
   const [isOpen, setIsOpen] = React.useState(false);
 
