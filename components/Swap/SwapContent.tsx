@@ -61,16 +61,16 @@ function getRoutePath(actions: EstimateSwapView[]) {
 function SwapContent() {
   const [payToken, setPayToken] = useState<Token>(tokenList[0]);
   const [receiveToken, setReceiveToken] = useState<Token>(tokenList[1]);
-  const [userPayTokenBalance, setUserPayTokenBalance] = useState<string>('');
+  const [userPayTokenBalance, setUserPayTokenBalance] =
+    useState<string>('0.0000');
   const [userReceiveTokenBalance, setUserReceiveTokenBalance] =
-    useState<string>('');
+    useState<string>('0.0000');
   const [inputAmount, setInputAmount] = useState<string>('');
   const [paths, setPaths] = useState<RouteInfo[]>();
   const [transactionPayload, setTransactionPayload] = useState<Transaction[]>();
   const [actions, setActions] = useState<any>();
   const [loading, setLoading] = useState<boolean>();
-  // TODO Remove placeholder routes on the UI. Display generated path once 'routes' is set
-  const [routes, setRoutes] = useState<SwapRoute[]>();
+  // const [routes, setRoutes] = useState<SwapRoute[]>();
   const { selector, modal, authKey, accountId } = useWalletSelector();
 
   useEffect(() => {
@@ -90,8 +90,12 @@ function SwapContent() {
   const fetcherWithDebounce = _.debounce(findRoutes, 1000);
 
   useEffect(() => {
-    getTokenBalance();
-  }, [payToken, receiveToken]);
+    if (authKey?.accountId) {
+      getTokenBalance();
+    }
+    setUserPayTokenBalance('0.0000');
+    setUserReceiveTokenBalance('0.0000');
+  }, [payToken, receiveToken, authKey]);
 
   async function getTokenBalance() {
     const { network } = selector.options;
@@ -105,7 +109,7 @@ function SwapContent() {
         account_id: payToken.id,
         method_name: 'ft_balance_of',
         args_base64: Buffer.from(
-          JSON.stringify({ account_id: accountId })
+          JSON.stringify({ account_id: authKey?.accountId })
         ).toString('base64'),
         finality: 'optimistic',
       });
@@ -122,7 +126,7 @@ function SwapContent() {
         account_id: receiveToken.id,
         method_name: 'ft_balance_of',
         args_base64: Buffer.from(
-          JSON.stringify({ account_id: accountId })
+          JSON.stringify({ account_id: authKey?.accountId })
         ).toString('base64'),
         finality: 'optimistic',
       });
@@ -202,16 +206,16 @@ function SwapContent() {
             },
           ]);
 
-          setRoutes([
-            {
-              output: refOutput.toString(),
-              actions: actions.ref,
-            },
-            {
-              output: jumboOutput.toString(),
-              actions: actions.jumbo,
-            },
-          ]);
+          // setRoutes([
+          //   {
+          //     output: refOutput.toString(),
+          //     actions: actions.ref,
+          //   },
+          //   {
+          //     output: jumboOutput.toString(),
+          //     actions: actions.jumbo,
+          //   },
+          // ]);
           console.log(
             'ref output',
             refOutput.toString(),
@@ -284,12 +288,12 @@ function SwapContent() {
   function handleInputChange(evt: any) {
     setInputAmount(evt.target.value);
   }
-
   async function handleSwap() {
     console.log('tokens', payToken, receiveToken);
 
     const wallet = await selector.wallet();
     if (transactionPayload) {
+      console.log({ transactionPayload });
       await wallet.signAndSendTransactions({
         transactions: transactionPayload,
       });
@@ -359,6 +363,7 @@ function SwapContent() {
               type="number"
               value={inputAmount}
               onChange={handleInputChange}
+              width={['50%', '50%', '75%', '75%']}
             />
           </Flex>
         </Box>

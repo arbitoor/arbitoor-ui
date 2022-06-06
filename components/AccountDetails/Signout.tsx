@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flex, Text, Box } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPowerOff } from '@fortawesome/free-solid-svg-icons';
 import { useWalletSelector } from '../../hooks/WalletSelectorContext';
@@ -20,6 +20,7 @@ function Signout() {
     });
     setAuthKey(null);
   }
+
   return (
     <Box onClick={handleSignOut} cursor="pointer">
       <FontAwesomeIcon
