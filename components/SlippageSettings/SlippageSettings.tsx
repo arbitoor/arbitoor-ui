@@ -99,7 +99,11 @@ function SlippageSettings() {
                     %
                   </InputRightAddon>
                 </InputGroup>
-                <Flex justifyContent="center" m="22px">
+                <Flex
+                  justifyContent="center"
+                  m="22px"
+                  marginTop={['28px', '28px', '28px', '65px']}
+                >
                   <Button
                     bg=" #de8f1761"
                     // variant="filled"
