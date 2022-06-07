@@ -1,11 +1,11 @@
 import React from 'react';
-import { Flex, Text, chakra, Box, Input } from '@chakra-ui/react';
+import { Flex, Text, chakra, Box, Image } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 export interface RouteInfo {
-  path: string[],
-  output: string,
+  path: string[];
+  output: string;
 }
 
 // TODO support arbitrary number of routes. Current hacky solution only takes 2 routes
@@ -39,8 +39,19 @@ function BestPrice({ routes }: { routes: [RouteInfo, RouteInfo] }) {
               borderRadius="8px"
             >
               <Flex direction="column">
-                <Flex alignItems="center" fontWeight="semibold">
-                  <chakra.span>Ref.finance</chakra.span>
+                <Flex
+                  alignItems="center"
+                  marginBottom="6px"
+                  fontWeight="semibold"
+                >
+                  <Image
+                    alt="exchange logo"
+                    src="/assets/dexLogos/ref.jpg"
+                    width={22}
+                    height={5}
+                    borderRadius="12px"
+                  />
+                  <chakra.span marginLeft="6px">Ref.finance</chakra.span>
                 </Flex>
                 <Flex direction="row">
                   {routes[0].path &&
@@ -48,7 +59,7 @@ function BestPrice({ routes }: { routes: [RouteInfo, RouteInfo] }) {
                       return (
                         <>
                           <Flex marginLeft="4px" alignItems="center" key={idx}>
-                            <Text fontSize="11px" fontWeight="semibold">
+                            <Text fontSize="11px">
                               <chakra.span>{ticker}</chakra.span>
                             </Text>
                             {arr.length - 1 > idx ? (
@@ -82,7 +93,7 @@ function BestPrice({ routes }: { routes: [RouteInfo, RouteInfo] }) {
             borderRadius="8px"
             // backgroundColor="#eee"
             backgroundColor="#101010"
-            marginTop="8px"
+            marginTop="16px"
           >
             <Flex
               fontSize="13px"
@@ -93,7 +104,14 @@ function BestPrice({ routes }: { routes: [RouteInfo, RouteInfo] }) {
             >
               <Flex direction="column">
                 <Flex alignItems="center" fontWeight="semibold">
-                  <chakra.span>Jumbo.finance</chakra.span>
+                  <Image
+                    alt="exchange logo"
+                    src="/assets/dexLogos/jumbo.svg"
+                    width={22}
+                    height={5}
+                    borderRadius="12px"
+                  />
+                  <chakra.span marginLeft="6px">Jumbo.finance</chakra.span>
                 </Flex>
                 <Flex direction="row">
                   {routes[1].path &&
@@ -101,7 +119,7 @@ function BestPrice({ routes }: { routes: [RouteInfo, RouteInfo] }) {
                       return (
                         <>
                           <Flex marginLeft="4px" alignItems="center" key={idx}>
-                            <Text fontSize="11px" fontWeight="semibold">
+                            <Text fontSize="11px">
                               <chakra.span>{ticker}</chakra.span>
                             </Text>
                             {arr.length - 1 > idx ? (
