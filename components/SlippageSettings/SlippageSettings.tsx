@@ -14,15 +14,17 @@ import {
   Flex,
   Box,
   chakra,
+  InputGroup,
+  InputLeftAddon,
+  InputRightAddon,
 } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSliders } from '@fortawesome/free-solid-svg-icons';
+import SlippageValueButton from './SlippageValueButton';
 
 function SlippageSettings() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const initialRef = React.useRef(null);
-  const finalRef = React.useRef(null);
   return (
     <>
       <Button
@@ -41,30 +43,21 @@ function SlippageSettings() {
       </Button>
 
       <Box marginRight="0 !important">
-        <Modal
-          // initialFocusRef={initialRef}
-          // finalFocusRef={finalRef}
-          isOpen={isOpen}
-          onClose={onClose}
-          isCentered
-          // size={'md'}
-        >
+        <Modal isOpen={isOpen} onClose={onClose} isCentered>
           <ModalOverlay
             css={{
               background: '#00000050',
-              // boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
               backdropFilter: 'blur(2.7px)',
               '&::-webkit-backdrop-filter': 'blur(2.8px)',
             }}
           />
           <ModalContent
-            maxHeight="40vh"
+            maxHeight="45vh"
             height="100%"
             overflow="hidden"
             width={['92%', '92%', '100%', '100%']}
             position="fixed"
             background="#26262C"
-            // left={['', '']}
           >
             <ModalHeader>
               <Text color="whitesmoke">Settings</Text>
@@ -77,49 +70,47 @@ function SlippageSettings() {
             </ModalHeader>
 
             <ModalBody pb={6} borderTop="1px solid #eee">
-              {/* <Box
-              position="absolute"
-              top="110px"
-              left="0"
-              maxW="448px"
-              w="100%"
-              zIndex="20"
-            >
-              <Flex
-                bgColor="#26262C"
-                borderRadius="14px"
-                boxShadow={
-                  '0 0 #0000,0 0 #0000,0 0 #0000,0 0 #0000,0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1)'
-                }
-                maxH="90vh"
-                height="100%"
-                width="100%"
-                direction="column"
-              >
-                <Box
-                  maxH="75vh"
-                  color="black"
-                  overflowY="scroll"
-                  css={{
-                    '&::-webkit-scrollbar': {
-                      width: '6px',
-                      backgroundColor: '#F5F5F5',
-                    },
-                    '&::-webkit-scrollbar-track': {
-                      width: '10px',
-                      borderRadius: '10px',
-                      backgroundColor: '#F5F5F5',
-                    },
-                    '&::-webkit-scrollbar-thumb': {
-                      background: 'gray',
-                      borderRadius: '10px',
-                    },
-                  }}
-                >
-                  Content
-                </Box>
-              </Flex>
-            </Box> */}
+              <Box color="whitesmoke">
+                <Text m="8px">Slippage Settings</Text>
+                <Flex justifyContent="space-around" m="16px 0">
+                  <SlippageValueButton slippageValue="0.1%" />
+                  <SlippageValueButton slippageValue="0.5%" m="0 8px" />
+                  <SlippageValueButton slippageValue="1%" />
+                </Flex>
+                <InputGroup border="1px solid #d09a4b" borderRadius="6px">
+                  <InputLeftAddon bg="transparent" border="none">
+                    Custom Slippage
+                  </InputLeftAddon>
+                  <Input
+                    border="none"
+                    _focus={{ boxShadow: 'none' }}
+                    variant="outline"
+                    fontWeight="600"
+                    fontSize="1.125rem"
+                    textAlign="right"
+                    placeholder="0.00"
+                    type="number"
+                    minWidth="30%"
+                    // value={inputAmount}
+                    // onChange={handleInputChange}
+                    // width={['50%', '50%', '100%', '100%']}
+                  />
+                  <InputRightAddon bg="transparent" border="none">
+                    %
+                  </InputRightAddon>
+                </InputGroup>
+                <Flex justifyContent="center" m="22px">
+                  <Button
+                    bg=" #de8f1761"
+                    // variant="filled"
+                    _hover={{ backgroundColor: '#d09a4b' }}
+                    _focus={{ boxShadow: 'none' }}
+                    onClick={onClose}
+                  >
+                    Save Settings
+                  </Button>
+                </Flex>
+              </Box>
             </ModalBody>
           </ModalContent>
         </Modal>
