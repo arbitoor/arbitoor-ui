@@ -23,7 +23,7 @@ import _ from 'lodash';
 import LoadingBestPrice from '../BestPrice/LoadingBestPrice';
 import { Transaction } from '@near-wallet-selector/core';
 import type { CodeResult } from 'near-api-js/lib/providers/provider';
-
+import SpinningRefresh from '../SpinningRefresh/SpinningRefresh';
 export interface SwapRoute {
   output: string;
   actions: EstimateSwapView[];
@@ -321,13 +321,8 @@ function SwapContent() {
       >
         <Flex marginBottom="16px" justifyContent="flex-end" alignItems="center">
           <Box paddingRight="18px">
-            <FontAwesomeIcon
-              icon={faRotateRight}
-              color="whitesmoke"
-              height="18px"
-              width="18px"
-              cursor="pointer"
-            />
+            <SpinningRefresh />
+            {/* <i className="fa-solid fa-sync fa-spin" color="white"></i> */}
           </Box>
           <Box>
             <FontAwesomeIcon
