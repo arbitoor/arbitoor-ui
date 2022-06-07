@@ -3,6 +3,7 @@ import React from 'react';
 
 interface Props {
   slippageValue: string;
+  m?: string;
 }
 
 function SlippageValueButton({ slippageValue, ...props }: Props) {
