@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Flex, Box, Input } from '@chakra-ui/react';
+import { Flex, Box, Input, Button } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { providers } from 'near-api-js';
 
-import { faSliders, faRotateRight } from '@fortawesome/free-solid-svg-icons';
+import { faSliders } from '@fortawesome/free-solid-svg-icons';
 import TokenList from '../TokenList/TokenList';
 import ToggleToken from '../ToggleToken/ToggleToken';
 import SwapSide from './SwapSide';
@@ -24,6 +24,7 @@ import LoadingBestPrice from '../BestPrice/LoadingBestPrice';
 import { Transaction } from '@near-wallet-selector/core';
 import type { CodeResult } from 'near-api-js/lib/providers/provider';
 import SpinningRefresh from '../SpinningRefresh/SpinningRefresh';
+import SlippageSettings from '../SlippageSettings/SlippageSettings';
 export interface SwapRoute {
   output: string;
   actions: EstimateSwapView[];
@@ -320,18 +321,11 @@ function SwapContent() {
         color="whitesmoke"
       >
         <Flex marginBottom="16px" justifyContent="flex-end" alignItems="center">
-          <Box paddingRight="18px">
+          <Box>
             <SpinningRefresh />
-            {/* <i className="fa-solid fa-sync fa-spin" color="white"></i> */}
           </Box>
           <Box>
-            <FontAwesomeIcon
-              icon={faSliders}
-              color="whitesmoke"
-              height="18px"
-              width="18px"
-              cursor="pointer"
-            />
+            <SlippageSettings />
           </Box>
         </Flex>
         <SwapSide swapSide="pay" balanceAmount={userPayTokenBalance} />
