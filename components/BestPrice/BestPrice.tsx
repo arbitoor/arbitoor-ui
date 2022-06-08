@@ -38,31 +38,32 @@ function BestPrice({ routes }: { routes: [RouteInfo, RouteInfo] }) {
               alignItems="center"
               borderRadius="8px"
             >
-              <Flex direction="column">
-                <Flex
-                  alignItems="center"
-                  marginBottom="6px"
-                  fontWeight="semibold"
-                >
+              <Flex direction="column" alignItems="center">
+                <Flex alignItems="center" fontWeight="semibold">
                   <Image
                     alt="exchange logo"
                     src="/assets/dexLogos/ref.jpg"
                     width={22}
-                    height={5}
+                    height={6}
                     borderRadius="12px"
                   />
-                  <chakra.span marginLeft="6px">Ref.finance</chakra.span>
+                  <chakra.span marginLeft="4px">Ref.finance</chakra.span>
                 </Flex>
-                <Flex direction="row">
-                  {routes[0].path &&
-                    routes[0].path.map((ticker: any, idx: number, arr: any) => {
-                      return (
-                        <>
-                          <Flex marginLeft="4px" alignItems="center" key={idx}>
-                            <Text fontSize="11px">
-                              <chakra.span>{ticker}</chakra.span>
-                            </Text>
-                            {arr.length - 1 > idx ? (
+                {/*<Flex direction="row">
+                   {routes[0].path &&
+                    routes[0].path.map(
+                      (ticker: string, idx: number, arr: any) => {
+                        return (
+                          <>
+                            <Flex
+                              marginLeft="4px"
+                              alignItems="center"
+                              key={idx}
+                            >
+                              <Text fontSize="11px">
+                                <chakra.span>{ticker}</chakra.span>
+                              </Text>
+                               {arr.length - 1 > idx ? (
                               <Flex alignItems="center" marginLeft="4px">
                                 <FontAwesomeIcon
                                   icon={faArrowRight}
@@ -71,12 +72,16 @@ function BestPrice({ routes }: { routes: [RouteInfo, RouteInfo] }) {
                                   width="12px"
                                 />
                               </Flex>
-                            ) : null}
-                          </Flex>
-                        </>
-                      );
-                    })}
-                </Flex>
+                            ) : null} 
+                            </Flex>
+                          </>
+                        );
+                      }
+                    )}
+                </Flex>*/}
+                <Text fontSize="11px">
+                  Routes found: {routes[0].path.length}
+                </Text>
               </Flex>
               <Box fontWeight="semibold" textAlign="right">
                 {routes[0].output}
@@ -111,9 +116,9 @@ function BestPrice({ routes }: { routes: [RouteInfo, RouteInfo] }) {
                     height={5}
                     borderRadius="12px"
                   />
-                  <chakra.span marginLeft="6px">Jumbo.finance</chakra.span>
+                  <chakra.span marginLeft="4px">Jumbo.finance</chakra.span>
                 </Flex>
-                <Flex direction="row">
+                {/* <Flex direction="row">
                   {routes[1].path &&
                     routes[1].path.map((ticker: any, idx: number, arr: any) => {
                       return (
@@ -136,7 +141,10 @@ function BestPrice({ routes }: { routes: [RouteInfo, RouteInfo] }) {
                         </>
                       );
                     })}
-                </Flex>
+                </Flex> */}
+                <Text fontSize="11px">
+                  Routes found: {routes[1].path.length}
+                </Text>
               </Flex>
               <Box fontWeight="semibold" textAlign="right">
                 {routes[1].output}

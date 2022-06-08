@@ -56,7 +56,9 @@ function getRoutePath(actions: EstimateSwapView[]) {
       routes.push(route);
     }
   }
-  return routes.join(', ').split(' -> ');
+
+  // return routes.join(', ').split(' -> ');
+  return routes;
 }
 
 function SwapContent() {
