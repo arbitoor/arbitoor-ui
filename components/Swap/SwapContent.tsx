@@ -25,6 +25,7 @@ import { Transaction } from '@near-wallet-selector/core';
 import type { CodeResult } from 'near-api-js/lib/providers/provider';
 import SpinningRefresh from '../SpinningRefresh/SpinningRefresh';
 import SlippageSettings from '../SlippageSettings/SlippageSettings';
+import { useGlobalStore } from '../../utils/globalStore';
 export interface SwapRoute {
   output: string;
   actions: EstimateSwapView[];
@@ -68,8 +69,16 @@ function SwapContent() {
     useState<string>('0.0000');
   const [userReceiveTokenBalance, setUserReceiveTokenBalance] =
     useState<string>('0.0000');
-  const [inputAmount, setInputAmount] = useState<string>('');
-  const [paths, setPaths] = useState<RouteInfo[]>();
+  // const [inputAmount, setInputAmount] = useState<string>('');
+  const [inputAmount, setInputAmount] = useGlobalStore((state) => [
+    state.inputAmount,
+    state.setInputAmount,
+  ]);
+  const [paths, setPaths] = useGlobalStore((state) => [
+    state.paths,
+    state.setPaths,
+  ]);
+  // const [paths, setPaths] = useState<RouteInfo[]>();
   const [transactionPayload, setTransactionPayload] = useState<Transaction[]>();
   const [actions, setActions] = useState<any>();
   const [loading, setLoading] = useState<boolean>();
