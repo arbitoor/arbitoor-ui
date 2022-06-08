@@ -24,6 +24,8 @@ function PriceDetailsDrawer() {
         p="12px"
         lineHeight="1.75"
         direction="column"
+        fontSize="14px"
+        letterSpacing="0.5px"
       >
         {/* <Text>Slippage tolerance : 0.5 %</Text> */}
         <Text>Price Impact : --</Text>

@@ -27,12 +27,15 @@ function SwapBody() {
       {inputAmount ? (
         <Button
           color="whitesmoke"
-          _focus={{ border: '1px solid #FF3260' }}
+          _focus={{ border: 'none' }}
           _hover={{ background: '#de8f1761' }}
           variant="unstyled"
-          border="1px solid #FF3260"
           onClick={togglePriceDetailsDrawer}
-          p="6px"
+          bg="#26262C"
+          p="6px 22px"
+          fontWeight="400"
+          fontSize="14px"
+          borderRadius="12px"
         >
           Price Details
         </Button>
