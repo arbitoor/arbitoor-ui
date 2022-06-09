@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Flex, Box, Input, Button } from '@chakra-ui/react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { providers } from 'near-api-js';
 
-import { faSliders } from '@fortawesome/free-solid-svg-icons';
+// import { faSliders } from '@fortawesome/free-solid-svg-icons';
 import TokenList from '../TokenList/TokenList';
 import ToggleToken from '../ToggleToken/ToggleToken';
 import SwapSide from './SwapSide';
 import BestPrice, { RouteInfo } from '../BestPrice/BestPrice';
 import CustomButton from '../CustomButton/CustomButton';
 import { tokenList } from '../../utils/tokenList';
-import { Token } from '../../types';
+// import { Token } from '../../types';
 import { useWalletSelector } from '../../hooks/WalletSelectorContext';
 import {
   Comet,
@@ -23,6 +23,7 @@ import _ from 'lodash';
 import LoadingBestPrice from '../BestPrice/LoadingBestPrice';
 import { Transaction } from '@near-wallet-selector/core';
 import type { CodeResult } from 'near-api-js/lib/providers/provider';
+import { TokenInfo } from '@tonic-foundation/token-list';
 import SpinningRefresh from '../SpinningRefresh/SpinningRefresh';
 import SlippageSettings from '../SlippageSettings/SlippageSettings';
 import { useGlobalStore } from '../../utils/globalStore';
@@ -63,8 +64,8 @@ function getRoutePath(actions: EstimateSwapView[]) {
 }
 
 function SwapContent() {
-  const [payToken, setPayToken] = useState<Token>(tokenList[0]);
-  const [receiveToken, setReceiveToken] = useState<Token>(tokenList[1]);
+  const [payToken, setPayToken] = useState<TokenInfo>();
+  const [receiveToken, setReceiveToken] = useState<TokenInfo>();
   const [userPayTokenBalance, setUserPayTokenBalance] =
     useState<string>('0.0000');
   const [userReceiveTokenBalance, setUserReceiveTokenBalance] =
@@ -118,7 +119,7 @@ function SwapContent() {
     try {
       const getPaytokenBalance = await provider.query<CodeResult>({
         request_type: 'call_function',
-        account_id: payToken.id,
+        account_id: payToken?.address,
         method_name: 'ft_balance_of',
         args_base64: Buffer.from(
           JSON.stringify({ account_id: authKey?.accountId })
@@ -128,14 +129,16 @@ function SwapContent() {
       const userPayTokenBalance = JSON.parse(
         Buffer.from(getPaytokenBalance.result).toString()
       );
-      const resultPay = (
-        userPayTokenBalance * Math.pow(10, -payToken.decimals)
-      ).toFixed(4);
-      setUserPayTokenBalance(resultPay);
+      if (payToken) {
+        const resultPay = (
+          userPayTokenBalance * Math.pow(10, -payToken?.decimals)
+        ).toFixed(4);
+        setUserPayTokenBalance(resultPay);
+      }
 
       const getReceivetokenBalance = await provider.query<CodeResult>({
         request_type: 'call_function',
-        account_id: receiveToken.id,
+        account_id: receiveToken?.address,
         method_name: 'ft_balance_of',
         args_base64: Buffer.from(
           JSON.stringify({ account_id: authKey?.accountId })
@@ -145,10 +148,12 @@ function SwapContent() {
       const userReceiveTokenBalance = JSON.parse(
         Buffer.from(getReceivetokenBalance.result).toString()
       );
-      const resultReceive = (
-        userReceiveTokenBalance * Math.pow(10, -receiveToken.decimals)
-      ).toFixed(4);
-      setUserReceiveTokenBalance(resultReceive);
+      if (receiveToken) {
+        const resultReceive = (
+          userReceiveTokenBalance * Math.pow(10, -receiveToken?.decimals)
+        ).toFixed(4);
+        setUserReceiveTokenBalance(resultReceive);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -180,8 +185,8 @@ function SwapContent() {
 
         console.log('generating actions');
         const actions = await comet.computeRoutes({
-          inputToken: payToken.id,
-          outputToken: receiveToken.id,
+          inputToken: payToken.address,
+          outputToken: receiveToken.address,
           inputAmount: inputAmountAdjusted.toFixed(),
         });
         console.log('actions received');
@@ -195,13 +200,13 @@ function SwapContent() {
           getExpectedOutputFromActions(
             provider,
             actions.ref,
-            receiveToken.id,
+            receiveToken.address,
             5
           ),
           getExpectedOutputFromActions(
             provider,
             actions.jumbo,
-            receiveToken.id,
+            receiveToken.address,
             5
           ),
         ]);
@@ -236,8 +241,8 @@ function SwapContent() {
           );
           const txs = await comet.nearInstantSwap({
             exchange: 'v2.ref-finance.near',
-            tokenIn: payToken.id,
-            tokenOut: receiveToken.id,
+            tokenIn: payToken.address,
+            tokenOut: receiveToken.address,
             tokenInDecimals: payToken.decimals,
             tokenOutDecimals: receiveToken.decimals,
             amountIn: inputAmountAdjusted.toFixed(),
@@ -261,8 +266,8 @@ function SwapContent() {
           ]);
           const txs = await comet.nearInstantSwap({
             exchange: 'v1.jumbo_exchange.near',
-            tokenIn: payToken.id,
-            tokenOut: receiveToken.id,
+            tokenIn: payToken.address,
+            tokenOut: receiveToken.address,
             tokenInDecimals: payToken.decimals,
             tokenOutDecimals: receiveToken.decimals,
             amountIn: inputAmountAdjusted.toFixed(),
@@ -286,10 +291,10 @@ function SwapContent() {
     modal.show();
   };
 
-  function selectPayToken(token: Token) {
+  function selectPayToken(token: TokenInfo) {
     setPayToken(token);
   }
-  function selectReceiveToken(token: Token) {
+  function selectReceiveToken(token: TokenInfo) {
     setReceiveToken(token);
   }
   function tokenSwitchHandler() {

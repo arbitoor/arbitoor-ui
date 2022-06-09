@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -14,14 +14,15 @@ import {
   Box,
   chakra,
 } from '@chakra-ui/react';
+import { TokenListProvider, TokenInfo } from '@tonic-foundation/token-list';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import { tokenList } from '../../utils/tokenList';
-import { Token } from '../../types';
+// import { tokenList } from '../../utils/tokenList';
+// import { Token } from '../../types';
 
 interface Props {
-  selectToken: (token: Token) => void;
-  token: Token;
+  selectToken: (token: TokenInfo) => void;
+  token: TokenInfo | undefined;
 }
 
 function TokenList({ selectToken, token }: Props) {
@@ -29,6 +30,15 @@ function TokenList({ selectToken, token }: Props) {
 
   const initialRef = React.useRef(null);
   const finalRef = React.useRef(null);
+
+  const [tokenList, setTokenList] = useState<TokenInfo[]>();
+
+  useEffect(() => {
+    new TokenListProvider().resolve().then((tokens) => {
+      const tokenList = tokens.filterByNearEnv('mainnet').getList();
+      setTokenList(tokenList);
+    });
+  }, [setTokenList]);
 
   return (
     <>
@@ -45,13 +55,13 @@ function TokenList({ selectToken, token }: Props) {
         <Flex>
           <Flex alignItems="center">
             <Image
-              alt="ticker logo"
-              src={token?.icon}
+              alt="tickLogo"
+              src={token?.logoURI || '/assets/icons/cross.png'}
               width={22}
               height={5}
               borderRadius="12px"
             />
-            <Text marginLeft="6px"> {token?.ticker}</Text>
+            <Text marginLeft="6px"> {token?.symbol}</Text>
             <Image
               src="/assets/icons/downArrow.svg"
               alt="arrow down"
@@ -146,36 +156,37 @@ function TokenList({ selectToken, token }: Props) {
                     },
                   }}
                 >
-                  {tokenList.map((token: Token) => {
-                    return (
-                      <chakra.a key={token.id} onClick={onClose}>
-                        <Box
-                          color="whitesmoke"
-                          _hover={{ bgColor: '#de8f1761' }}
-                          padding="14px 48px"
-                          onClick={() => {
-                            selectToken(token);
-                          }}
-                        >
-                          <Flex>
-                            <Image
-                              alt="ticker logo"
-                              src={token.icon}
-                              width="30px"
-                              height="28px"
-                              borderRadius="12px"
-                            />
+                  {tokenList &&
+                    tokenList.map((token: TokenInfo) => {
+                      return (
+                        <chakra.a key={token.address} onClick={onClose}>
+                          <Box
+                            color="whitesmoke"
+                            _hover={{ bgColor: '#de8f1761' }}
+                            padding="14px 48px"
+                            onClick={() => {
+                              selectToken(token);
+                            }}
+                          >
                             <Flex>
-                              <Flex direction="column">
-                                <Text>{token.ticker}</Text>
-                                <Text fontSize="12px">{token.description}</Text>
+                              <Image
+                                alt="ticker logo"
+                                src={token.logoURI || '/assets/icons/cross.png'}
+                                width="30px"
+                                height="28px"
+                                borderRadius="12px"
+                              />
+                              <Flex>
+                                <Flex direction="column">
+                                  <Text>{token.symbol}</Text>
+                                  <Text fontSize="12px">{token.name}</Text>
+                                </Flex>
                               </Flex>
                             </Flex>
-                          </Flex>
-                        </Box>
-                      </chakra.a>
-                    );
-                  })}
+                          </Box>
+                        </chakra.a>
+                      );
+                    })}
                 </Box>
               </Flex>
             </Box>
