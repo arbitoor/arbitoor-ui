@@ -381,17 +381,17 @@ function SwapContent() {
           />
 
           <TokenList selectToken={selectReceiveToken} token={receiveToken} />
-          {loading || !paths?.length ? (
+          {loading || !paths?.length || !inputAmount ? (
             <LoadingBestPrice
               text={
                 inputAmount
                   ? 'Please wait while we fetch the best price...'
                   : ''
               }
-              display={!inputAmount ? 'none' : 'flex'}
+              display={!inputAmount.length ? 'none' : 'flex'}
             />
           ) : (
-            paths.length === 2 && (
+            paths.length && (
               <BestPrice routes={paths as [RouteInfo, RouteInfo]} />
             )
           )}

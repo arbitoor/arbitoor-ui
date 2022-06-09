@@ -41,7 +41,7 @@ function SwapBody() {
         </Button>
       ) : null}
 
-      {show ? <PriceDetailsDrawer /> : null}
+      {inputAmount ? show ? <PriceDetailsDrawer /> : null : null}
     </Flex>
   );
 }
