@@ -15,7 +15,7 @@ const Home: NextPage = () => {
         />
         <link rel="icon" href="/favicon.svg" />
       </Head>
-      <Searchbar />
+      {/* <Searchbar /> */}
       <Swap />
     </Layout>
   );

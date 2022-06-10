@@ -7,7 +7,12 @@ interface AppProps {
 
 function Layout({ children }: AppProps) {
   return (
-    <Flex padding="0 32px" direction="column" minHeight="100vh">
+    <Flex
+      padding="0 32px"
+      direction="column"
+      justifyContent="center"
+      minHeight="100vh"
+    >
       {children}
     </Flex>
   );
