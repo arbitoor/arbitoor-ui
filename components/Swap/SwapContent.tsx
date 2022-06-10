@@ -1,16 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Flex, Box, Input, Button } from '@chakra-ui/react';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Flex, Box, Input, Text } from '@chakra-ui/react';
 import { providers } from 'near-api-js';
-
-// import { faSliders } from '@fortawesome/free-solid-svg-icons';
 import TokenList from '../TokenList/TokenList';
 import ToggleToken from '../ToggleToken/ToggleToken';
 import SwapSide from './SwapSide';
 import BestPrice, { RouteInfo } from '../BestPrice/BestPrice';
 import CustomButton from '../CustomButton/CustomButton';
 import { tokenList } from '../../utils/tokenList';
-// import { Token } from '../../types';
 import { useWalletSelector } from '../../hooks/WalletSelectorContext';
 import {
   Comet,
@@ -19,14 +15,13 @@ import {
 } from 'comet-sdk';
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
-// import { debounce } from '../../utils/helpers';
 import LoadingBestPrice from '../BestPrice/LoadingBestPrice';
 import { Transaction } from '@near-wallet-selector/core';
 import type { CodeResult } from 'near-api-js/lib/providers/provider';
-import { TokenInfo } from '@tonic-foundation/token-list';
 import SpinningRefresh from '../SpinningRefresh/SpinningRefresh';
 import SlippageSettings from '../SlippageSettings/SlippageSettings';
 import { useGlobalStore } from '../../utils/globalStore';
+import { TokenMetadata } from '../../utils/Database';
 export interface SwapRoute {
   output: string;
   actions: EstimateSwapView[];
@@ -64,8 +59,12 @@ function getRoutePath(actions: EstimateSwapView[]) {
 }
 
 function SwapContent() {
-  const [payToken, setPayToken] = useState<TokenInfo>();
-  const [receiveToken, setReceiveToken] = useState<TokenInfo>();
+  const tokenListDB = useGlobalStore((state) => state.tokenListDB);
+
+  const [payToken, setPayToken] = useState<TokenMetadata>(tokenListDB[1]);
+  const [receiveToken, setReceiveToken] = useState<TokenMetadata>(
+    tokenListDB[14]
+  );
   const [userPayTokenBalance, setUserPayTokenBalance] =
     useState<string>('0.0000');
   const [userReceiveTokenBalance, setUserReceiveTokenBalance] =
@@ -291,10 +290,10 @@ function SwapContent() {
     modal.show();
   };
 
-  function selectPayToken(token: TokenInfo) {
+  function selectPayToken(token: TokenMetadata) {
     setPayToken(token);
   }
-  function selectReceiveToken(token: TokenInfo) {
+  function selectReceiveToken(token: TokenMetadata) {
     setReceiveToken(token);
   }
   function tokenSwitchHandler() {
@@ -336,13 +335,20 @@ function SwapContent() {
         padding="22px 22px 32px"
         color="whitesmoke"
       >
-        <Flex marginBottom="16px" justifyContent="flex-end" alignItems="center">
-          <Box>
-            <SpinningRefresh />
-          </Box>
-          <Box>
-            <SlippageSettings />
-          </Box>
+        <Flex justifyContent="space-between">
+          <Text fontSize="22px">Swap</Text>
+          <Flex
+            marginBottom="16px"
+            justifyContent="flex-end"
+            alignItems="center"
+          >
+            <Box>
+              <SpinningRefresh />
+            </Box>
+            <Box>
+              <SlippageSettings />
+            </Box>
+          </Flex>
         </Flex>
         <SwapSide swapSide="pay" balanceAmount={userPayTokenBalance} />
         <Box

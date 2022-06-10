@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -14,15 +14,18 @@ import {
   Box,
   chakra,
 } from '@chakra-ui/react';
-import { TokenListProvider, TokenInfo } from '@tonic-foundation/token-list';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { TokenMetadata } from '../../utils/Database';
+
+import { useGlobalStore } from '../../utils/globalStore';
 // import { tokenList } from '../../utils/tokenList';
 // import { Token } from '../../types';
 
 interface Props {
-  selectToken: (token: TokenInfo) => void;
-  token: TokenInfo | undefined;
+  selectToken: (token: TokenMetadata) => void;
+  token: TokenMetadata | undefined;
 }
 
 function TokenList({ selectToken, token }: Props) {
@@ -31,14 +34,7 @@ function TokenList({ selectToken, token }: Props) {
   const initialRef = React.useRef(null);
   const finalRef = React.useRef(null);
 
-  const [tokenList, setTokenList] = useState<TokenInfo[]>();
-
-  useEffect(() => {
-    new TokenListProvider().resolve().then((tokens) => {
-      const tokenList = tokens.filterByNearEnv('mainnet').getList();
-      setTokenList(tokenList);
-    });
-  }, [setTokenList]);
+  const tokenListDB = useGlobalStore((state) => state.tokenListDB);
 
   return (
     <>
@@ -156,8 +152,8 @@ function TokenList({ selectToken, token }: Props) {
                     },
                   }}
                 >
-                  {tokenList &&
-                    tokenList.map((token: TokenInfo) => {
+                  {tokenListDB &&
+                    tokenListDB.map((token: TokenMetadata) => {
                       return (
                         <chakra.a key={token.address} onClick={onClose}>
                           <Box
