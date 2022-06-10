@@ -32,7 +32,7 @@ function PriceDetailsDrawer() {
         <Box>
           <Flex direction="row">
             <Text flex="1 0 0%">Routes :</Text>
-            <Box flex="1 0 65%">
+            <Box flex={['1 0 45%', '1 0 55%', '1 0 65%', '1 0 65%']}>
               {paths.length
                 ? paths[0].path.map((ticker: string, idx: number) => {
                     return <Text key={idx}>{ticker}</Text>;

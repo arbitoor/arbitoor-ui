@@ -15,6 +15,7 @@ function LoadingBestPrice({ text, display }: Props) {
       justifyContent="center"
       alignItems="center"
       marginTop="12px"
+      p="12px"
       display={display}
     >
       {text}

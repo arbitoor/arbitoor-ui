@@ -61,7 +61,7 @@ function getRoutePath(actions: EstimateSwapView[]) {
 function SwapContent() {
   const tokenListDB = useGlobalStore((state) => state.tokenListDB);
 
-  const [payToken, setPayToken] = useState<TokenMetadata>(tokenListDB[1]);
+  const [payToken, setPayToken] = useState<TokenMetadata>(tokenListDB[46]);
   const [receiveToken, setReceiveToken] = useState<TokenMetadata>(
     tokenListDB[14]
   );
