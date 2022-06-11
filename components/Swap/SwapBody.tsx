@@ -64,7 +64,7 @@ function SwapBody() {
       maxW="450px"
       paddingBottom="96px"
     >
-      <chakra.form>
+      <chakra.form width="100%">
         {!loading ? (
           <SwapContent />
         ) : (
