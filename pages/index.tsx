@@ -13,7 +13,7 @@ const Home: NextPage = () => {
           name="Arbitoor"
           content="The best swap aggregator on Near Protocol."
         />
-        <link rel="icon" href="/favicon.svg" />
+        <link rel="icon" href="/fav.svg" />
       </Head>
       {/* <Searchbar /> */}
       <Swap />
