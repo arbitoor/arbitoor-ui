@@ -61,9 +61,9 @@ function getRoutePath(actions: EstimateSwapView[]) {
 function SwapContent() {
   const tokenListDB = useGlobalStore((state) => state.tokenListDB);
 
-  const [payToken, setPayToken] = useState<TokenMetadata>(tokenListDB[46]);
+  const [payToken, setPayToken] = useState<TokenMetadata>(tokenListDB[53]);
   const [receiveToken, setReceiveToken] = useState<TokenMetadata>(
-    tokenListDB[14]
+    tokenListDB[45]
   );
   const [userPayTokenBalance, setUserPayTokenBalance] =
     useState<string>('0.0000');
@@ -178,6 +178,7 @@ function SwapContent() {
 
   async function getPoolData() {
     if (receiveToken) {
+      console.log('fetching storage');
       await inMemoryProvider.ftFetchStorageBalance(
         receiveToken.address,
         localStorage.getItem('accountId')!
