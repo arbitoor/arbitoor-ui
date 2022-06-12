@@ -11,8 +11,8 @@ import { useWalletSelector } from '../../hooks/WalletSelectorContext';
 import {
   Comet,
   EstimateSwapView,
-  getExpectedOutputFromActions,
-} from 'comet-sdk';
+  InMemoryProvider,
+} from '@arbitoor/arbitoor-core';
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
 import LoadingBestPrice from '../BestPrice/LoadingBestPrice';
@@ -69,7 +69,7 @@ function SwapContent() {
     useState<string>('0.0000');
   const [userReceiveTokenBalance, setUserReceiveTokenBalance] =
     useState<string>('0.0000');
-  // const [inputAmount, setInputAmount] = useState<string>('');
+
   const [inputAmount, setInputAmount] = useGlobalStore((state) => [
     state.inputAmount,
     state.setInputAmount,
@@ -78,12 +78,17 @@ function SwapContent() {
     state.paths,
     state.setPaths,
   ]);
-  // const [paths, setPaths] = useState<RouteInfo[]>();
+
   const [transactionPayload, setTransactionPayload] = useState<Transaction[]>();
   const [actions, setActions] = useState<any>();
   const [loading, setLoading] = useState<boolean>();
-  // const [routes, setRoutes] = useState<SwapRoute[]>();
   const { selector, modal, authKey, accountId } = useWalletSelector();
+
+  const { network } = selector.options;
+  const provider = new providers.JsonRpcProvider({
+    url: network.nodeUrl,
+  });
+  const inMemoryProvider = new InMemoryProvider(provider);
 
   useEffect(() => {
     if (inputAmount !== '') {
@@ -105,16 +110,12 @@ function SwapContent() {
     if (authKey?.accountId) {
       getTokenBalance();
     }
+
     setUserPayTokenBalance('0.0000');
     setUserReceiveTokenBalance('0.0000');
   }, [payToken, receiveToken, authKey]);
 
   async function getTokenBalance() {
-    const { network } = selector.options;
-    const provider = new providers.JsonRpcProvider({
-      url: network.nodeUrl,
-    });
-
     try {
       const getPaytokenBalance = await provider.query<CodeResult>({
         request_type: 'call_function',
@@ -168,16 +169,22 @@ function SwapContent() {
         // const provider = new providers.JsonRpcProvider({
         //   url: 'https://near-mainnet--rpc--archive.datahub.figment.io/apikey/e7051fbb390e25bd106777e8194529c7',
         // });
-        const { network } = selector.options;
-        const provider = new providers.JsonRpcProvider({
-          url: network.nodeUrl,
-        });
-        // const provider = new providers.JsonRpcProvider({
-        //   url: selector.network.nodeUrl,
-        // });
+
+        const tokenMap = tokenListDB.reduce((map, item) => {
+          map.set(item.address, item);
+          return map;
+        }, new Map<string, TokenMetadata>());
+
+        await inMemoryProvider.ftFetchStorageBalance(
+          receiveToken.address,
+          localStorage.getItem('accountId')!
+        );
+        await inMemoryProvider.fetchPools();
 
         const comet = new Comet({
           provider,
+          accountProvider: inMemoryProvider,
+          tokenMap,
           user: localStorage.getItem('accountId')!,
           routeCacheDuration: 1000,
         });
@@ -187,28 +194,17 @@ function SwapContent() {
           inputToken: payToken.address,
           outputToken: receiveToken.address,
           inputAmount: inputAmountAdjusted.toFixed(),
+          slippageTolerance: 0.5,
         });
-        console.log('actions received');
+        console.log('actions', actions);
         setActions(actions);
 
         // Use this to display swap paths on the UI
-        const refPath = getRoutePath(actions.ref);
-        const jumboPath = getRoutePath(actions.jumbo);
+        const refPath = getRoutePath(actions[0].actions);
+        const jumboPath = getRoutePath(actions[1].actions);
 
-        const [refOutput, jumboOutput] = await Promise.all([
-          getExpectedOutputFromActions(
-            provider,
-            actions.ref,
-            receiveToken.address,
-            5
-          ),
-          getExpectedOutputFromActions(
-            provider,
-            actions.jumbo,
-            receiveToken.address,
-            5
-          ),
-        ]);
+        const refOutput = actions[0].output;
+        const jumboOutput = actions[1].output;
 
         if (refOutput.gte(jumboOutput)) {
           setPaths([
@@ -222,35 +218,16 @@ function SwapContent() {
             },
           ]);
 
-          // setRoutes([
-          //   {
-          //     output: refOutput.toString(),
-          //     actions: actions.ref,
-          //   },
-          //   {
-          //     output: jumboOutput.toString(),
-          //     actions: actions.jumbo,
-          //   },
-          // ]);
           console.log(
             'ref output',
             refOutput.toString(),
             'jumbo',
             jumboOutput.toString()
           );
-          const txs = await comet.nearInstantSwap({
-            exchange: 'v2.ref-finance.near',
-            tokenIn: payToken.address,
-            tokenOut: receiveToken.address,
-            tokenInDecimals: payToken.decimals,
-            tokenOutDecimals: receiveToken.decimals,
-            amountIn: inputAmountAdjusted.toFixed(),
-            swapsToDo: actions.ref,
-            slippageTolerance: 5,
-          });
+
+          const txs = actions[0].txs;
           console.log({ txs });
 
-          // setRefTransactionPayload(txs);
           setTransactionPayload(txs);
         } else {
           setPaths([
@@ -263,18 +240,8 @@ function SwapContent() {
               output: refOutput.toFixed(3),
             },
           ]);
-          const txs = await comet.nearInstantSwap({
-            exchange: 'v1.jumbo_exchange.near',
-            tokenIn: payToken.address,
-            tokenOut: receiveToken.address,
-            tokenInDecimals: payToken.decimals,
-            tokenOutDecimals: receiveToken.decimals,
-            amountIn: inputAmountAdjusted.toFixed(),
-            swapsToDo: actions.ref,
-            slippageTolerance: 5,
-          });
 
-          // setJumboTransactionPayload(txs);
+          const txs = actions[1].txs;
           setTransactionPayload(txs);
         }
         setLoading(false);

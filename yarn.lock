@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@arbitoor/arbitoor-core@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@arbitoor/arbitoor-core/-/arbitoor-core-1.0.1.tgz#2d3005beabb6d30795dedec9199239b01d6e5345"
+  integrity sha512-FpOX6hWSBYcmPOpzg6TkK5yTObBtuALRYGAsYX7Mq896yvTrLnnywKGLoqjV81m6pxKeeB8wj1peSs9je0QdGw==
+
 "@babel/code-frame@^7.0.0":
   version "7.16.7"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.16.7.tgz#44416b6bd7624b998f5b1af5d470856c40138789"

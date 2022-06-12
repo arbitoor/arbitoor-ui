@@ -1,4 +1,5 @@
 import Dexie from 'dexie';
+import { NearEnv } from '@tonic-foundation/config';
 
 
 export interface TokenMetadata {
@@ -8,11 +9,11 @@ export interface TokenMetadata {
   decimals: number;
   symbol: string;
   extensions?: any;
-  icon?: string | null;
+  icon: string | null;
   logoURI?: string;
-  nearEnv?: string | undefined;
-  reference?: string | null;
-  reference_hash?: string | null;
+  nearEnv: NearEnv;
+  reference: string | null;
+  reference_hash: string | null;
   tags?: string[] | undefined;
   spec: string;
 }

@@ -1,6 +1,5 @@
 .spinRefresh {
   animation: spin infinite 10s linear;
-  
 }
 @keyframes spin {
   from {
