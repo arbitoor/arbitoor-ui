@@ -90,6 +90,19 @@ function SwapContent() {
   });
   const inMemoryProvider = new InMemoryProvider(provider);
 
+  const tokenMap = tokenListDB.reduce((map, item) => {
+    map.set(item.address, item);
+    return map;
+  }, new Map<string, TokenMetadata>());
+
+  const comet = new Comet({
+    provider,
+    accountProvider: inMemoryProvider,
+    tokenMap,
+    user: localStorage.getItem('accountId')!,
+    routeCacheDuration: 1000,
+  });
+
   useEffect(() => {
     if (inputAmount !== '') {
       memoizedFetcher(inputAmount);
@@ -114,6 +127,10 @@ function SwapContent() {
     setUserPayTokenBalance('0.0000');
     setUserReceiveTokenBalance('0.0000');
   }, [payToken, receiveToken, authKey]);
+
+  useEffect(() => {
+    getPoolData();
+  }, [payToken, receiveToken]);
 
   async function getTokenBalance() {
     try {
@@ -159,53 +176,39 @@ function SwapContent() {
     }
   }
 
+  async function getPoolData() {
+    if (receiveToken) {
+      await inMemoryProvider.ftFetchStorageBalance(
+        receiveToken.address,
+        localStorage.getItem('accountId')!
+      );
+    }
+    await inMemoryProvider.fetchPools();
+  }
+
   async function findRoutes(input: string) {
     if (input && payToken && receiveToken && selector) {
       const inputAmountAdjusted = new BigNumber(10)
         .pow(payToken.decimals)
         .multipliedBy(new BigNumber(input));
-
       try {
         // const provider = new providers.JsonRpcProvider({
         //   url: 'https://near-mainnet--rpc--archive.datahub.figment.io/apikey/e7051fbb390e25bd106777e8194529c7',
         // });
-
-        const tokenMap = tokenListDB.reduce((map, item) => {
-          map.set(item.address, item);
-          return map;
-        }, new Map<string, TokenMetadata>());
-
-        await inMemoryProvider.ftFetchStorageBalance(
-          receiveToken.address,
-          localStorage.getItem('accountId')!
-        );
-        await inMemoryProvider.fetchPools();
-
-        const comet = new Comet({
-          provider,
-          accountProvider: inMemoryProvider,
-          tokenMap,
-          user: localStorage.getItem('accountId')!,
-          routeCacheDuration: 1000,
-        });
-
         console.log('generating actions');
         const actions = await comet.computeRoutes({
-          inputToken: payToken.address,
-          outputToken: receiveToken.address,
+          inputToken: payToken!.address,
+          outputToken: receiveToken!.address,
           inputAmount: inputAmountAdjusted.toFixed(),
           slippageTolerance: 0.5,
         });
         console.log('actions', actions);
         setActions(actions);
-
         // Use this to display swap paths on the UI
         const refPath = getRoutePath(actions[0].actions);
         const jumboPath = getRoutePath(actions[1].actions);
-
         const refOutput = actions[0].output;
         const jumboOutput = actions[1].output;
-
         if (refOutput.gte(jumboOutput)) {
           setPaths([
             {
@@ -217,17 +220,14 @@ function SwapContent() {
               output: jumboOutput.toFixed(3),
             },
           ]);
-
           console.log(
             'ref output',
             refOutput.toString(),
             'jumbo',
             jumboOutput.toString()
           );
-
           const txs = actions[0].txs;
           console.log({ txs });
-
           setTransactionPayload(txs);
         } else {
           setPaths([
@@ -240,7 +240,6 @@ function SwapContent() {
               output: refOutput.toFixed(3),
             },
           ]);
-
           const txs = actions[1].txs;
           setTransactionPayload(txs);
         }

@@ -35,6 +35,7 @@ function TokenList({ selectToken, token }: Props) {
   const finalRef = React.useRef(null);
 
   const tokenListDB = useGlobalStore((state) => state.tokenListDB);
+  // const [filteredList, setFilteredList] = React.useState([]);
 
   return (
     <>
