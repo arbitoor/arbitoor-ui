@@ -52,7 +52,14 @@ function TokenList({ selectToken, token }: Props) {
           <Flex alignItems="center">
             <Image
               alt="tickLogo"
-              src={token?.logoURI || '/assets/icons/cross.png'}
+              src={
+                token?.logoURI ||
+                (token?.address === 'wrap.near'
+                  ? '/assets/tickerLogos/wNear.png'
+                  : token?.address === 'usn'
+                  ? '/assets/tickerLogos/usn.png'
+                  : '/assets/icons/cross.png')
+              }
               width={22}
               height={5}
               borderRadius="12px"
