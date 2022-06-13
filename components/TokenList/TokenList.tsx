@@ -14,7 +14,7 @@ import {
   Box,
   chakra,
 } from '@chakra-ui/react';
-
+import _ from 'lodash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { TokenMetadata } from '../../utils/Database';
@@ -35,6 +35,22 @@ function TokenList({ selectToken, token }: Props) {
   const finalRef = React.useRef(null);
 
   const tokenListDB = useGlobalStore((state) => state.tokenListDB);
+  const [filteredList, setFilteredList] =
+    React.useState<TokenMetadata[]>(tokenListDB);
+
+  const handleSearch = (e: any) => {
+    const { value } = e.target;
+
+    if (!value.length) {
+      setFilteredList(tokenListDB);
+    }
+    //TODO: add filter via token address
+    const filteredData = _.filter(tokenListDB, (data) => {
+      return data.symbol.toLowerCase().indexOf(value.toLowerCase()) > -1;
+    });
+
+    setFilteredList(filteredData);
+  };
 
   return (
     <>
@@ -108,6 +124,7 @@ function TokenList({ selectToken, token }: Props) {
                 border="none"
                 _focus={{ boxShadow: 'none' }}
                 ref={initialRef}
+                onChange={(e) => handleSearch(e)}
               />
             </Flex>
           </ModalHeader>
@@ -152,8 +169,8 @@ function TokenList({ selectToken, token }: Props) {
                     },
                   }}
                 >
-                  {tokenListDB &&
-                    tokenListDB.map((token: TokenMetadata) => {
+                  {filteredList &&
+                    filteredList.map((token: TokenMetadata) => {
                       return (
                         <chakra.a key={token.address} onClick={onClose}>
                           <Box
@@ -162,6 +179,7 @@ function TokenList({ selectToken, token }: Props) {
                             padding="14px 48px"
                             onClick={() => {
                               selectToken(token);
+                              setFilteredList(tokenListDB);
                             }}
                           >
                             <Flex>
