@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@arbitoor/arbitoor-core@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@arbitoor/arbitoor-core/-/arbitoor-core-1.0.1.tgz#2d3005beabb6d30795dedec9199239b01d6e5345"
-  integrity sha512-FpOX6hWSBYcmPOpzg6TkK5yTObBtuALRYGAsYX7Mq896yvTrLnnywKGLoqjV81m6pxKeeB8wj1peSs9je0QdGw==
+"@arbitoor/arbitoor-core@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@arbitoor/arbitoor-core/-/arbitoor-core-1.0.6.tgz#28e01e7a0ad2209d5ac775307db38116a93f6ef2"
+  integrity sha512-NtlfZtAVCpBJDPjZB5trrgf4ilEBbl4R/lj7mu5C+TWlCGU1K0yZOsOy3eME8TAds/7G+lEFHZVFNa+etfsjAQ==
 
 "@babel/code-frame@^7.0.0":
   version "7.16.7"
@@ -1179,10 +1179,10 @@
   dependencies:
     near-api-js "^0.44.2"
 
-"@tonic-foundation/token-list@^0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@tonic-foundation/token-list/-/token-list-0.0.4.tgz#08eac2fd99811163359424cffcd030c5a384c8c7"
-  integrity sha512-A8ECnJ3lbGWekvVSBHX3fZBN/nXcXGpCVXNQkmPhg491Mss75jmRSt4mk51i0vPlH/lTcwjdWGfye25Q+zZIUg==
+"@tonic-foundation/token-list@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@tonic-foundation/token-list/-/token-list-0.0.6.tgz#c58753e09300f26ad2e4ed9ce70203fecbf7f882"
+  integrity sha512-WM+rnxpMduqOu4Jn3cufj8XovqtofXgv4AQCsPv0+IZyNvjVM4TOAOBEyOENd78oMPsS3ac4Dmf7KVZ5A6knQA==
   dependencies:
     "@tonic-foundation/config" "^0.0.3"
     "@tonic-foundation/token" "^0.0.3"
