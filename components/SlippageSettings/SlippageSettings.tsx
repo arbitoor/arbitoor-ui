@@ -21,9 +21,19 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSliders } from '@fortawesome/free-solid-svg-icons';
 import SlippageValueButton from './SlippageValueButton';
+import { useGlobalStore } from '../../utils/globalStore';
 
 function SlippageSettings() {
+  const slippageOptions = [0.1, 0.5, 1];
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [slippageValue, setSlippageValue] = useGlobalStore((state) => [
+    state.slippageValue,
+    state.setSlippageValue,
+  ]);
+
+  function handleCustomSlippageValue(value: number) {
+    setSlippageValue(value);
+  }
 
   return (
     <>
@@ -73,9 +83,15 @@ function SlippageSettings() {
               <Box color="whitesmoke">
                 <Text m="8px">Slippage Settings</Text>
                 <Flex justifyContent="space-around" m="16px 0">
-                  <SlippageValueButton slippageValue="0.1%" />
-                  <SlippageValueButton slippageValue="0.5%" m="0 8px" />
-                  <SlippageValueButton slippageValue="1%" />
+                  {slippageOptions.map((option: number, idx: number) => (
+                    <>
+                      <SlippageValueButton
+                        text={`${option} %`}
+                        margin={idx !== slippageOptions.length ? 2 : undefined}
+                        onClick={() => handleCustomSlippageValue(option)}
+                      />
+                    </>
+                  ))}
                 </Flex>
                 <InputGroup border="1px solid #d09a4b" borderRadius="6px">
                   <InputLeftAddon bg="transparent" border="none">
@@ -91,8 +107,10 @@ function SlippageSettings() {
                     placeholder="0.00"
                     type="number"
                     minWidth="30%"
-                    // value={inputAmount}
-                    // onChange={handleInputChange}
+                    value={slippageValue}
+                    onChange={(e) => {
+                      setSlippageValue(+e.target.value);
+                    }}
                     // width={['50%', '50%', '100%', '100%']}
                   />
                   <InputRightAddon bg="transparent" border="none">

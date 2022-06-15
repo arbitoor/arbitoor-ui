@@ -61,9 +61,9 @@ function getRoutePath(actions: EstimateSwapView[]) {
 function SwapContent() {
   const tokenListDB = useGlobalStore((state) => state.tokenListDB);
 
-  const [payToken, setPayToken] = useState<TokenMetadata>(tokenListDB[46]);
+  const [payToken, setPayToken] = useState<TokenMetadata>(tokenListDB[53]);
   const [receiveToken, setReceiveToken] = useState<TokenMetadata>(
-    tokenListDB[14]
+    tokenListDB[47]
   );
   const [userPayTokenBalance, setUserPayTokenBalance] =
     useState<string>('0.0000');
@@ -79,7 +79,11 @@ function SwapContent() {
     state.setPaths,
   ]);
 
-  const [transactionPayload, setTransactionPayload] = useState<Transaction[]>();
+  const slippageValue = useGlobalStore((state) => state.slippageValue);
+
+  const [transactionPayload, setTransactionPayload] = useState<Transaction[]>(
+    []
+  );
   const [actions, setActions] = useState<any>();
   const [loading, setLoading] = useState<boolean>();
   const { selector, modal, authKey, accountId } = useWalletSelector();
@@ -88,12 +92,19 @@ function SwapContent() {
   const provider = new providers.JsonRpcProvider({
     url: network.nodeUrl,
   });
-  const inMemoryProvider = new InMemoryProvider(provider);
+
+  const tokenMap = tokenListDB.reduce((map, item) => {
+    map.set(item.address, item);
+    return map;
+  }, new Map<string, TokenMetadata>());
+
+  const inMemoryProvider = new InMemoryProvider(provider, tokenMap);
 
   useEffect(() => {
     if (inputAmount !== '') {
       memoizedFetcher(inputAmount);
     }
+    
   }, [payToken, receiveToken, inputAmount]);
 
   const memoizedFetcher = useCallback(
@@ -170,11 +181,6 @@ function SwapContent() {
         //   url: 'https://near-mainnet--rpc--archive.datahub.figment.io/apikey/e7051fbb390e25bd106777e8194529c7',
         // });
 
-        const tokenMap = tokenListDB.reduce((map, item) => {
-          map.set(item.address, item);
-          return map;
-        }, new Map<string, TokenMetadata>());
-
         await inMemoryProvider.ftFetchStorageBalance(
           receiveToken.address,
           localStorage.getItem('accountId')!
@@ -184,7 +190,6 @@ function SwapContent() {
         const comet = new Comet({
           provider,
           accountProvider: inMemoryProvider,
-          tokenMap,
           user: localStorage.getItem('accountId')!,
           routeCacheDuration: 1000,
         });
@@ -194,10 +199,11 @@ function SwapContent() {
           inputToken: payToken.address,
           outputToken: receiveToken.address,
           inputAmount: inputAmountAdjusted.toFixed(),
-          slippageTolerance: 0.5,
+          slippageTolerance: slippageValue,
         });
-        console.log('actions', actions);
         setActions(actions);
+
+        console.log('actions', actions);
 
         // Use this to display swap paths on the UI
         const refPath = getRoutePath(actions[0].actions);
@@ -206,44 +212,21 @@ function SwapContent() {
         const refOutput = actions[0].output;
         const jumboOutput = actions[1].output;
 
-        if (refOutput.gte(jumboOutput)) {
-          setPaths([
-            {
-              path: refPath,
-              output: refOutput.toFixed(3),
-            },
-            {
-              path: jumboPath,
-              output: jumboOutput.toFixed(3),
-            },
-          ]);
+        setPaths([
+          {
+            path: refPath,
+            output: refOutput.toFixed(3),
+          },
+          {
+            path: jumboPath,
+            output: jumboOutput.toFixed(3),
+          },
+        ]);
 
-          console.log(
-            'ref output',
-            refOutput.toString(),
-            'jumbo',
-            jumboOutput.toString()
-          );
+        const txs = actions[0].txs;
+        console.log({ txs });
+        setTransactionPayload(txs);
 
-          const txs = actions[0].txs;
-          console.log({ txs });
-
-          setTransactionPayload(txs);
-        } else {
-          setPaths([
-            {
-              path: jumboPath,
-              output: jumboOutput.toFixed(3),
-            },
-            {
-              path: refPath,
-              output: refOutput.toFixed(3),
-            },
-          ]);
-
-          const txs = actions[1].txs;
-          setTransactionPayload(txs);
-        }
         setLoading(false);
       } catch (error) {
         console.error(error);
@@ -275,22 +258,13 @@ function SwapContent() {
     console.log('tokens', payToken, receiveToken);
 
     const wallet = await selector.wallet();
-    if (transactionPayload) {
-      console.log({ transactionPayload });
+
+    if (actions[0]) {
+      console.log('actions', actions[0].txs);
       await wallet.signAndSendTransactions({
         transactions: transactionPayload,
       });
     }
-
-    // if (refOutput.gte(jumboOutput)) {
-    //   await selector.signAndSendTransactions({
-    //     transactions: refTransactionPayload,
-    //   });
-    // } else {
-    //   await selector.signAndSendTransactions({
-    //     transactions: jumboTransactionPayload,
-    //   });
-    // }
   }
   return (
     <>
@@ -381,7 +355,7 @@ function SwapContent() {
         text="Connect Wallet"
         isSignedIn={authKey?.accountId}
         swapHandler={authKey?.accountId ? handleSwap : handleSignIn}
-        disabled={authKey?.accountId && !paths?.length}
+        disabled={authKey?.accountId && !paths?.length || !inputAmount}
         // isSignedIn={selector.isSignedIn()}
         // swapHandler={selector.isSignedIn() ? handleSwap : handleSignIn}
         // disabled={selector.isSignedIn() && !paths?.length}

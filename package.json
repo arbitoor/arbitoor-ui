@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@arbitoor/arbitoor-core": "^1.0.1",
+    "@arbitoor/arbitoor-core": "^1.0.6",
     "@chakra-ui/react": "^2.0.0",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
@@ -25,7 +25,7 @@
     "@near-wallet-selector/near-wallet": "^4.0.0",
     "@near-wallet-selector/sender": "^4.0.0",
     "@near-wallet-selector/wallet-connect": "^4.0.0",
-    "@tonic-foundation/token-list": "^0.0.4",
+    "@tonic-foundation/token-list": "^0.0.6",
     "big.js": "^6.1.1",
     "bignumber.js": "^9.0.2",
     "comet-sdk": "^1.0.1",

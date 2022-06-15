@@ -2,15 +2,17 @@ import { Button } from '@chakra-ui/react';
 import React from 'react';
 
 interface Props {
-  slippageValue: string;
-  m?: string;
+  text: string;
+  margin: number | undefined;
+  onClick: () => void;
 }
 
-function SlippageValueButton({ slippageValue, ...props }: Props) {
+function SlippageValueButton({ text, ...props }: Props) {
   return (
     <>
       <Button
         variant="outline"
+        _active={{ bgColor: '#de8f1761' }}
         _hover={{ bgColor: '#de8f1761' }}
         bg="transparent"
         flex="1 1 0%"
@@ -18,7 +20,7 @@ function SlippageValueButton({ slippageValue, ...props }: Props) {
         borderColor="#d09a4b"
         {...props}
       >
-        {slippageValue}
+        {text}
       </Button>
     </>
   );
