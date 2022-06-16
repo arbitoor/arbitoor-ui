@@ -97,7 +97,7 @@ function TokenList({ selectToken, token }: Props) {
             background: '#5d5d6db1',
             // boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
             backdropFilter: 'blur(7.8px)',
-            '&::-webkit-backdrop-filter': 'blur(7.8px)',
+            '&::WebkitBackdropFilter': 'blur(7.8px)',
           }}
         />
         <ModalContent
