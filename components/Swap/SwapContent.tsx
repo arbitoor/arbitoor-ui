@@ -6,7 +6,7 @@ import ToggleToken from '../ToggleToken/ToggleToken';
 import SwapSide from './SwapSide';
 import BestPrice, { RouteInfo } from '../BestPrice/BestPrice';
 import CustomButton from '../CustomButton/CustomButton';
-import { tokenList } from '../../utils/tokenList';
+// import { tokenList } from '../../utils/tokenList';
 import { useWalletSelector } from '../../hooks/WalletSelectorContext';
 import {
   Comet,
@@ -34,7 +34,7 @@ export interface SwapRoute {
  * @param actions
  * @returns
  */
-function getRoutePath(actions: EstimateSwapView[]) {
+function getRoutePath(actions: EstimateSwapView[], tokenList: TokenMetadata[]) {
   const routes: string[] = [];
 
   for (let i = 0; i < actions.length; i++) {
@@ -42,10 +42,10 @@ function getRoutePath(actions: EstimateSwapView[]) {
     const route = action
       .nodeRoute!.map((token) => {
         const saved = tokenList.find((savedToken) => {
-          return savedToken.id == token;
+          return savedToken.address == token;
         });
 
-        return saved ? saved.ticker : token.slice(0, 10);
+        return saved ? saved.symbol : token.slice(0, 10);
       })
       .join(' -> ');
 
@@ -86,6 +86,9 @@ function SwapContent() {
   );
   const [actions, setActions] = useState<any>();
   const [loading, setLoading] = useState<boolean>();
+
+  const storageAccount = localStorage.getItem('accountId');
+
   const { selector, modal, authKey, accountId } = useWalletSelector();
 
   const { network } = selector.options;
@@ -104,7 +107,6 @@ function SwapContent() {
     if (inputAmount !== '') {
       memoizedFetcher(inputAmount);
     }
-    
   }, [payToken, receiveToken, inputAmount]);
 
   const memoizedFetcher = useCallback(
@@ -125,6 +127,10 @@ function SwapContent() {
     setUserPayTokenBalance('0.0000');
     setUserReceiveTokenBalance('0.0000');
   }, [payToken, receiveToken, authKey]);
+
+  useEffect(() => {
+    fetchStorageBalance();
+  }, [receiveToken, authKey]);
 
   async function getTokenBalance() {
     try {
@@ -170,6 +176,22 @@ function SwapContent() {
     }
   }
 
+  async function fetchStorageBalance() {
+    if (receiveToken && storageAccount) {
+      const storage = inMemoryProvider.ftGetStorageBalance(
+        receiveToken.address,
+        storageAccount
+      );
+      console.log({ storage });
+      if (!storage) {
+        await inMemoryProvider.ftFetchStorageBalance(
+          receiveToken.address,
+          storageAccount
+        );
+      }
+    }
+  }
+
   async function findRoutes(input: string) {
     if (input && payToken && receiveToken && selector) {
       const inputAmountAdjusted = new BigNumber(10)
@@ -181,10 +203,6 @@ function SwapContent() {
         //   url: 'https://near-mainnet--rpc--archive.datahub.figment.io/apikey/e7051fbb390e25bd106777e8194529c7',
         // });
 
-        await inMemoryProvider.ftFetchStorageBalance(
-          receiveToken.address,
-          localStorage.getItem('accountId')!
-        );
         await inMemoryProvider.fetchPools();
 
         const comet = new Comet({
@@ -206,22 +224,16 @@ function SwapContent() {
         console.log('actions', actions);
 
         // Use this to display swap paths on the UI
-        const refPath = getRoutePath(actions[0].actions);
-        const jumboPath = getRoutePath(actions[1].actions);
+        let pathList: RouteInfo[] = [];
 
-        const refOutput = actions[0].output;
-        const jumboOutput = actions[1].output;
+        actions.forEach((action) => {
+          const path = getRoutePath(action.actions, tokenListDB);
+          const output = action.output.toFixed(3);
+          const dex = action.dex;
+          pathList.push({ path, output, dex });
+        });
 
-        setPaths([
-          {
-            path: refPath,
-            output: refOutput.toFixed(3),
-          },
-          {
-            path: jumboPath,
-            output: jumboOutput.toFixed(3),
-          },
-        ]);
+        setPaths(pathList);
 
         const txs = actions[0].txs;
         console.log({ txs });
@@ -260,7 +272,6 @@ function SwapContent() {
     const wallet = await selector.wallet();
 
     if (actions[0]) {
-      console.log('actions', actions[0].txs);
       await wallet.signAndSendTransactions({
         transactions: transactionPayload,
       });
@@ -355,7 +366,7 @@ function SwapContent() {
         text="Connect Wallet"
         isSignedIn={authKey?.accountId}
         swapHandler={authKey?.accountId ? handleSwap : handleSignIn}
-        disabled={authKey?.accountId && !paths?.length || !inputAmount}
+        disabled={(authKey?.accountId && !paths?.length) || !inputAmount}
         // isSignedIn={selector.isSignedIn()}
         // swapHandler={selector.isSignedIn() ? handleSwap : handleSignIn}
         // disabled={selector.isSignedIn() && !paths?.length}

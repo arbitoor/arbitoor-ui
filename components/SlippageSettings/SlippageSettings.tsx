@@ -58,7 +58,7 @@ function SlippageSettings() {
             css={{
               background: '#00000050',
               backdropFilter: 'blur(2.7px)',
-              '&::-webkit-backdrop-filter': 'blur(2.8px)',
+              '&::WebkitBackdropFilter': 'blur(2.8px)',
             }}
           />
           <ModalContent
@@ -86,6 +86,7 @@ function SlippageSettings() {
                   {slippageOptions.map((option: number, idx: number) => (
                     <>
                       <SlippageValueButton
+                        key={option}
                         text={`${option} %`}
                         margin={idx !== slippageOptions.length ? 2 : undefined}
                         onClick={() => handleCustomSlippageValue(option)}
