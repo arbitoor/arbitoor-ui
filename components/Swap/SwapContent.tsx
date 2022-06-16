@@ -63,7 +63,7 @@ function SwapContent() {
 
   const [payToken, setPayToken] = useState<TokenMetadata>(tokenListDB[53]);
   const [receiveToken, setReceiveToken] = useState<TokenMetadata>(
-    tokenListDB[47]
+    tokenListDB[45]
   );
   const [userPayTokenBalance, setUserPayTokenBalance] =
     useState<string>('0.0000');
