@@ -264,7 +264,7 @@ function SwapContent() {
   }
 
   function handleInputChange(evt: any) {
-    if (evt.target.value > 0) {
+    if (evt.target.value > 0 || evt.target.value === '') {
       setInputAmount(evt.target.value);
     }
   }
