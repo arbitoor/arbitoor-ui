@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Box, chakra, Button, Flex } from '@chakra-ui/react';
+import { Box, chakra, Button, Flex, Spinner } from '@chakra-ui/react';
 import { TokenListProvider, TokenInfo } from '@tonic-foundation/token-list';
 
 import { db, TokenMetadata } from '../../utils/Database';
@@ -68,8 +68,16 @@ function SwapBody() {
         {!loading ? (
           <SwapContent />
         ) : (
-          //TODO: MUST add a loading spinner
-          <div style={{ color: 'white' }}>Loading...</div>
+          //TODO: MUST add a custom loading spinner
+          <Flex justifyContent="center">
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="#F18652"
+              size="xl"
+            />
+          </Flex>
         )}
         <div style={{ marginBottom: '32px' }} />
       </chakra.form>
