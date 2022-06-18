@@ -264,7 +264,9 @@ function SwapContent() {
   }
 
   function handleInputChange(evt: any) {
-    setInputAmount(evt.target.value);
+    if (evt.target.value > 0) {
+      setInputAmount(evt.target.value);
+    }
   }
   async function handleSwap() {
     console.log('tokens', payToken, receiveToken);
