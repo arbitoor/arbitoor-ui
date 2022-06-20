@@ -9,7 +9,7 @@ interface Props {
 
 function ToggleToken({ handleTokenSwitch }: Props) {
   return (
-    <Box marginTop="36px">
+    <Box marginTop={['56px', '36px', '36px']}>
       <Flex justifyContent="center">
         <Flex
           color="black"
