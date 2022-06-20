@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Flex, Box, Input, Text } from '@chakra-ui/react';
+import { Flex, Box, Input, Text, chakra } from '@chakra-ui/react';
 import { providers } from 'near-api-js';
 import TokenList from '../TokenList/TokenList';
 import ToggleToken from '../ToggleToken/ToggleToken';
@@ -86,6 +86,7 @@ function SwapContent() {
   );
   const [actions, setActions] = useState<any>();
   const [loading, setLoading] = useState<boolean>();
+  const [inputError, setInputError] = useState<string>('');
 
   const storageAccount = localStorage.getItem('accountId');
 
@@ -264,8 +265,15 @@ function SwapContent() {
   }
 
   function handleInputChange(evt: any) {
-    if (evt.target.value > 0 || evt.target.value === '') {
-      setInputAmount(evt.target.value);
+    const { value } = evt.target;
+    if (value > 0 || value === '') {
+      setInputAmount(value);
+    }
+    if (inputError) {
+      setInputError('');
+    }
+    if (+userPayTokenBalance < +value) {
+      setInputError('Insufficient funds to make this transaction');
     }
   }
   async function handleSwap() {
@@ -331,6 +339,19 @@ function SwapContent() {
               width={['50%', '50%', '75%', '75%']}
             />
           </Flex>
+          {inputError ? (
+            <chakra.span
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                color: 'red',
+                paddingBottom: '8px',
+              }}
+            >
+              {inputError}
+            </chakra.span>
+          ) : null}
         </Box>
 
         <ToggleToken handleTokenSwitch={tokenSwitchHandler} />
@@ -368,7 +389,11 @@ function SwapContent() {
         text="Connect Wallet"
         isSignedIn={authKey?.accountId}
         swapHandler={authKey?.accountId ? handleSwap : handleSignIn}
-        disabled={(authKey?.accountId && !paths?.length) || !inputAmount}
+        disabled={
+          (authKey?.accountId && !paths?.length) ||
+          !inputAmount ||
+          inputError.length
+        }
         // isSignedIn={selector.isSignedIn()}
         // swapHandler={selector.isSignedIn() ? handleSwap : handleSignIn}
         // disabled={selector.isSignedIn() && !paths?.length}
