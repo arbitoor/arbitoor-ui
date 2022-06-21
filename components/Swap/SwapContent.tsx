@@ -22,6 +22,7 @@ import SpinningRefresh from '../SpinningRefresh/SpinningRefresh';
 import SlippageSettings from '../SlippageSettings/SlippageSettings';
 import { useGlobalStore } from '../../utils/globalStore';
 import { TokenMetadata } from '../../utils/Database';
+
 export interface SwapRoute {
   output: string;
   actions: EstimateSwapView[];
@@ -339,7 +340,7 @@ function SwapContent() {
               width={['50%', '50%', '75%', '75%']}
             />
           </Flex>
-          {inputError ? (
+          {authKey?.accountId && inputError ? (
             <chakra.span
               style={{
                 display: 'flex',
@@ -390,9 +391,8 @@ function SwapContent() {
         isSignedIn={authKey?.accountId}
         swapHandler={authKey?.accountId ? handleSwap : handleSignIn}
         disabled={
-          (authKey?.accountId && !paths?.length) ||
-          !inputAmount ||
-          inputError.length
+          (authKey?.accountId && !paths?.length && inputError.length) ||
+          !inputAmount
         }
         // isSignedIn={selector.isSignedIn()}
         // swapHandler={selector.isSignedIn() ? handleSwap : handleSignIn}

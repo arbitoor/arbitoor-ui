@@ -2,10 +2,13 @@ import React from 'react';
 import { Flex, Button } from '@chakra-ui/react';
 import TitleContent from './TitleContent';
 import SwapBody from './SwapBody';
+import TransactionStatus from '../TransactionStatus/TransactionStatus';
 
 function Swap() {
   return (
     <Flex direction="column" justifyContent="space-between">
+      <TransactionStatus />
+
       <Flex
         direction="column"
         alignItems="center"
