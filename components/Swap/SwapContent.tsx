@@ -41,7 +41,7 @@ function getRoutePath(actions: any, tokenList: TokenMetadata[]) {
   for (let i = 0; i < actions.length; i++) {
     const action = actions[i];
     const route = action
-      .nodeRoute!.map((token) => {
+      .nodeRoute!.map((token: any) => {
         const saved = tokenList.find((savedToken) => {
           return savedToken.address == token;
         });
@@ -208,7 +208,6 @@ function SwapContent() {
         await inMemoryProvider.fetchPools();
 
         const comet = new Comet({
-          provider,
           accountProvider: inMemoryProvider,
           user: localStorage.getItem('accountId')!,
           routeCacheDuration: 1000,
