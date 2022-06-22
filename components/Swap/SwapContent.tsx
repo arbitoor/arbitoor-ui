@@ -10,7 +10,7 @@ import CustomButton from '../CustomButton/CustomButton';
 import { useWalletSelector } from '../../hooks/WalletSelectorContext';
 import {
   Comet,
-  EstimateSwapView,
+  // EstimateSwapView,
   InMemoryProvider,
 } from '@arbitoor/arbitoor-core';
 import BigNumber from 'bignumber.js';
@@ -23,10 +23,10 @@ import SlippageSettings from '../SlippageSettings/SlippageSettings';
 import { useGlobalStore } from '../../utils/globalStore';
 import { TokenMetadata } from '../../utils/Database';
 
-export interface SwapRoute {
-  output: string;
-  actions: EstimateSwapView[];
-}
+// export interface SwapRoute {
+//   output: string;
+//   actions: EstimateSwapView[];
+// }
 
 /**
  * Returns a string representation of swap path
@@ -35,13 +35,13 @@ export interface SwapRoute {
  * @param actions
  * @returns
  */
-function getRoutePath(actions: EstimateSwapView[], tokenList: TokenMetadata[]) {
+function getRoutePath(actions: any, tokenList: TokenMetadata[]) {
   const routes: string[] = [];
 
   for (let i = 0; i < actions.length; i++) {
     const action = actions[i];
     const route = action
-      .nodeRoute!.map((token) => {
+      .nodeRoute!.map((token: any) => {
         const saved = tokenList.find((savedToken) => {
           return savedToken.address == token;
         });
@@ -64,7 +64,7 @@ function SwapContent() {
 
   const [payToken, setPayToken] = useState<TokenMetadata>(tokenListDB[53]);
   const [receiveToken, setReceiveToken] = useState<TokenMetadata>(
-    tokenListDB[45]
+    tokenListDB[47]
   );
   const [userPayTokenBalance, setUserPayTokenBalance] =
     useState<string>('0.0000');
@@ -208,7 +208,6 @@ function SwapContent() {
         await inMemoryProvider.fetchPools();
 
         const comet = new Comet({
-          provider,
           accountProvider: inMemoryProvider,
           user: localStorage.getItem('accountId')!,
           routeCacheDuration: 1000,
