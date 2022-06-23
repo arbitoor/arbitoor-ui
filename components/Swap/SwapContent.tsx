@@ -339,7 +339,7 @@ function SwapContent() {
               width={['50%', '50%', '75%', '75%']}
             />
           </Flex>
-          {authKey?.accountId && inputError ? (
+          {/* {authKey?.accountId && inputError ? (
             <chakra.span
               style={{
                 display: 'flex',
@@ -351,7 +351,7 @@ function SwapContent() {
             >
               {inputError}
             </chakra.span>
-          ) : null}
+          ) : null} */}
         </Box>
 
         <ToggleToken handleTokenSwitch={tokenSwitchHandler} />
@@ -385,7 +385,7 @@ function SwapContent() {
         }}
       />
       <CustomButton
-        btnType="swap"
+        btnType={authKey?.accountId && inputError.length ? 'error' : 'swap'}
         text="Connect Wallet"
         isSignedIn={authKey?.accountId}
         swapHandler={authKey?.accountId ? handleSwap : handleSignIn}
