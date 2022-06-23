@@ -21,43 +21,78 @@ function TransactionStatus() {
   // const txHash = txHashes[1].join();
 
   useEffect(() => {
-    if (txHashes && txHashes.length > 1 && authKey?.accountId) {
-      checkTransactionStatus(txHashes[1], authKey?.accountId).then(
-        (res: any) => {
-          const status: any = res.status;
-          const data: string | undefined = status.SuccessValue;
-          if (data) {
-            const buff = Buffer.from(data, 'base64');
-            const value = buff.toString('ascii');
+    if (txHashes && authKey?.accountId) {
+      if (txHashes.length > 1) {
+        checkTransactionStatus(txHashes[1], authKey?.accountId).then(
+          (res: any) => {
+            const status: any = res.status;
+            const data: string | undefined = status.SuccessValue;
+            if (data) {
+              const buff = Buffer.from(data, 'base64');
+              const value = buff.toString('ascii');
 
-            setStatus(value);
+              setStatus(value);
+            }
           }
-        }
-      );
+        );
+      } else {
+        checkTransactionStatus(txHashes[0], authKey?.accountId).then(
+          (res: any) => {
+            const status: any = res.status;
+            const data: string | undefined = status.SuccessValue;
+            if (data) {
+              const buff = Buffer.from(data, 'base64');
+              const value = buff.toString('ascii');
+
+              setStatus(value);
+            }
+          }
+        );
+      }
     }
   }, [params]);
 
   useEffect(() => {
     if (getTransactionHashes && status && txHashes) {
-      toast({
-        title:
-          status.length > 3 ? 'Transaction Successful' : 'Transaction Failed',
-        description: getTransactionHashes ? (
-          <a
-            href={`https://explorer.mainnet.near.org/transactions/${txHashes[1]}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            To view on explorer click here
-          </a>
-        ) : null,
-        status: status.length > 3 ? 'success' : 'error',
-        duration: 7000,
-        isClosable: true,
-        position: 'bottom-left',
-      });
+      if (txHashes.length > 1) {
+        toast({
+          title:
+            status.length > 3 ? 'Transaction Successful' : 'Transaction Failed',
+          description: getTransactionHashes ? (
+            <a
+              href={`https://explorer.mainnet.near.org/transactions/${txHashes[1]}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              To view on explorer click here
+            </a>
+          ) : null,
+          status: status.length > 3 ? 'success' : 'error',
+          duration: 7000,
+          isClosable: true,
+          position: 'bottom-left',
+        });
+      } else {
+        toast({
+          title:
+            status.length > 3 ? 'Transaction Successful' : 'Transaction Failed',
+          description: getTransactionHashes ? (
+            <a
+              href={`https://explorer.mainnet.near.org/transactions/${txHashes[0]}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              To view on explorer click here
+            </a>
+          ) : null,
+          status: status.length > 3 ? 'success' : 'error',
+          duration: 7000,
+          isClosable: true,
+          position: 'bottom-left',
+        });
+      }
     }
-  }, [params, status]);
+  }, [status]);
 
   async function checkTransactionStatus(txHash: string, accountId: string) {
     const result = await provider.txStatus(txHash, accountId);
