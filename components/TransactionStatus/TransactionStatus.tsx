@@ -16,32 +16,35 @@ function TransactionStatus() {
   });
   const params = location.search;
   const searchParams = new URLSearchParams(params);
-  const transactionHashes = searchParams.get('transactionHashes');
+  const getTransactionHashes = searchParams.get('transactionHashes');
+  const txHashes = getTransactionHashes?.split(',');
+  // const txHash = txHashes[1].join();
 
   useEffect(() => {
-    if (transactionHashes && authKey?.accountId) {
-      checkTransactionStatus(transactionHashes, authKey?.accountId).then(
+    if (txHashes && txHashes.length > 1 && authKey?.accountId) {
+      checkTransactionStatus(txHashes[1], authKey?.accountId).then(
         (res: any) => {
           const status: any = res.status;
           const data: string | undefined = status.SuccessValue;
           if (data) {
             const buff = Buffer.from(data, 'base64');
             const value = buff.toString('ascii');
+
             setStatus(value);
           }
         }
       );
     }
-  }, [transactionHashes]);
+  }, [params]);
 
   useEffect(() => {
-    if (transactionHashes && status) {
+    if (getTransactionHashes && status && txHashes) {
       toast({
         title:
           status.length > 3 ? 'Transaction Successful' : 'Transaction Failed',
-        description: transactionHashes ? (
+        description: getTransactionHashes ? (
           <a
-            href={`https://explorer.mainnet.near.org/transactions/${transactionHashes}`}
+            href={`https://explorer.mainnet.near.org/transactions/${txHashes[1]}`}
             target="_blank"
             rel="noreferrer"
           >
@@ -54,7 +57,7 @@ function TransactionStatus() {
         position: 'bottom-left',
       });
     }
-  }, [transactionHashes, status]);
+  }, [params, status]);
 
   async function checkTransactionStatus(txHash: string, accountId: string) {
     const result = await provider.txStatus(txHash, accountId);

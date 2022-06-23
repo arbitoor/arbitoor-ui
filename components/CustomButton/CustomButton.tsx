@@ -36,6 +36,24 @@ function CustomButton({
       </Button>
     );
   }
+  if (isSignedIn && btnType === 'error') {
+    return (
+      <Button
+        position="relative"
+        width="100%"
+        color="white"
+        borderRadius="14px"
+        height="56px"
+        marginTop="16px"
+        // bg="linear-gradient(90deg, rgba(65,65,65,1) 0%, rgba(0,0,0,1) 100%)"
+        bg="radial-gradient(circle at left top, #ff0078, #ffb720 100%)"
+        _hover={{ opacity: '1' }}
+        {...props}
+      >
+        Insufficient Funds
+      </Button>
+    );
+  }
   return (
     <>
       <Box>
