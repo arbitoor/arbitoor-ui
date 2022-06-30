@@ -7,3 +7,7 @@ export function debounce(cb: any, delay: any) {
     }, delay);
   };
 }
+
+export function percentToNumber(value: any) {
+  return (value / 100);
+}

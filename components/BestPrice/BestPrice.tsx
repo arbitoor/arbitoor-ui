@@ -3,9 +3,10 @@ import { Flex, Text, chakra, Box, Image } from '@chakra-ui/react';
 import { DexList, dexList } from '../../utils/dexList';
 
 export interface RouteInfo {
-  path: string[];
+  path: string[] | undefined;
   output: string;
   dex: string;
+  routePercentage: string[] | undefined;
 }
 
 // TODO support arbitrary number of routes. Current hacky solution only takes 2 routes
@@ -14,7 +15,7 @@ function BestPrice({ routes }: { routes: [RouteInfo, RouteInfo] }) {
     <Box maxHeight="163px" height="100%">
       <Box position="relative" height="163px" w="100%">
         <Box height="148px" w="100%">
-          {routes &&
+          {routes[0].path?.length ? (
             routes.map((route, idx) => {
               return (
                 <>
@@ -42,40 +43,48 @@ function BestPrice({ routes }: { routes: [RouteInfo, RouteInfo] }) {
                       },
                     }}
                   >
-                    <Flex
-                      fontSize="13px"
-                      padding="16px"
-                      justifyContent="space-between"
-                      alignItems="center"
-                      borderRadius="8px"
-                    >
-                      <Flex direction="column" alignItems="center">
-                        <Flex alignItems="center" fontWeight="semibold">
-                          <Image
-                            alt="exchange logo"
-                            src={dexList[route?.dex as keyof DexList].icon}
-                            width={22}
-                            height={6}
-                            borderRadius="12px"
-                          />
+                    {route.output !== '0' && route.path?.length ? (
+                      <Flex
+                        fontSize="13px"
+                        padding="16px"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        borderRadius="8px"
+                      >
+                        <Flex direction="column" alignItems="center">
+                          <Flex alignItems="center" fontWeight="semibold">
+                            <Image
+                              alt="exchange logo"
+                              src={dexList[route?.dex as keyof DexList].icon}
+                              width={22}
+                              height={6}
+                              borderRadius="12px"
+                            />
 
-                          <chakra.span marginLeft="4px">
-                            {dexList[route?.dex as keyof DexList].name}
-                          </chakra.span>
+                            <chakra.span marginLeft="4px">
+                              {dexList[route?.dex as keyof DexList].name}
+                            </chakra.span>
+                          </Flex>
+
+                          <Text fontSize="11px">
+                            Routes found:{' '}
+                            {route.path?.length ? route?.path?.length : 0}
+                          </Text>
                         </Flex>
-
-                        <Text fontSize="11px">
-                          Routes found: {route.path.length}
-                        </Text>
+                        <Box fontWeight="semibold" textAlign="right">
+                          {route.output}
+                        </Box>
                       </Flex>
-                      <Box fontWeight="semibold" textAlign="right">
-                        {route.output}
-                      </Box>
-                    </Flex>
+                    ) : null}
                   </Box>
                 </>
               );
-            })}
+            })
+          ) : (
+            <Flex justifyContent="center" alignItems="center" height="100%">
+              No Routes found!
+            </Flex>
+          )}
         </Box>
       </Box>
     </Box>

@@ -9,8 +9,8 @@ import CustomButton from '../CustomButton/CustomButton';
 // import { tokenList } from '../../utils/tokenList';
 import { useWalletSelector } from '../../hooks/WalletSelectorContext';
 import {
-  Comet,
-  // EstimateSwapView,
+  Arbitoor,
+  getRoutePath,
   InMemoryProvider,
 } from '@arbitoor/arbitoor-core';
 import BigNumber from 'bignumber.js';
@@ -35,27 +35,45 @@ import { TokenMetadata } from '../../utils/Database';
  * @param actions
  * @returns
  */
-function getRoutePath(actions: any, tokenList: TokenMetadata[]) {
-  const routes: string[] = [];
+// function getRoutePath(actions: any, tokenList: TokenMetadata[]) {
+//   const routes: string[] = [];
 
-  for (let i = 0; i < actions.length; i++) {
-    const action = actions[i];
-    const route = action
-      .nodeRoute!.map((token: any) => {
-        const saved = tokenList.find((savedToken) => {
+//   for (let i = 0; i < actions.length; i++) {
+//     const action = actions[i];
+//     const route = action
+//       .nodeRoute!.map((token: any) => {
+//         const saved = tokenList.find((savedToken) => {
+//           return savedToken.address == token;
+//         });
+
+//         return saved ? saved.symbol : token.slice(0, 10);
+//       })
+//       .join(' -> ');
+
+//     if (i === 0 || routes[routes.length - 1] !== route) {
+//       routes.push(route);
+//     }
+//   }
+
+//   // return routes.join(', ').split(' -> ');
+//   return routes;
+// }
+function normalizeRoutesPath(actions: any, tokenList: TokenMetadata[]) {
+  const routes: string[] = [];
+  actions.forEach((action: any) => {
+    const route = action.tokens
+      .map((token: any) => {
+        const [saved] = tokenList.filter((savedToken) => {
           return savedToken.address == token;
         });
 
         return saved ? saved.symbol : token.slice(0, 10);
       })
-      .join(' -> ');
-
-    if (i === 0 || routes[routes.length - 1] !== route) {
+      .join(' --> ');
+    if (routes[routes.length - 1] !== route) {
       routes.push(route);
     }
-  }
-
-  // return routes.join(', ').split(' -> ');
+  });
   return routes;
 }
 
@@ -184,7 +202,7 @@ function SwapContent() {
         receiveToken.address,
         storageAccount
       );
-      console.log({ storage });
+
       if (!storage) {
         await inMemoryProvider.ftFetchStorageBalance(
           receiveToken.address,
@@ -207,14 +225,14 @@ function SwapContent() {
 
         await inMemoryProvider.fetchPools();
 
-        const comet = new Comet({
+        const arbitoor = new Arbitoor({
           accountProvider: inMemoryProvider,
           user: localStorage.getItem('accountId')!,
           routeCacheDuration: 1000,
         });
 
         console.log('generating actions');
-        const actions = await comet.computeRoutes({
+        const actions = await arbitoor.computeRoutes({
           inputToken: payToken.address,
           outputToken: receiveToken.address,
           inputAmount: inputAmountAdjusted.toFixed(),
@@ -224,19 +242,45 @@ function SwapContent() {
 
         console.log('actions', actions);
 
+        // console.log(
+        //   'outputs',
+        //   actions.map((route) => {
+        //     const path = getRoutePath(route.view);
+        //     const norm = normalizeRoutesPath(path, tokenListDB);
+        //     const per = path.map((data) => data.percentage);
+        //     return {
+        //       output: route.output.toString(),
+        //       path,
+        //       // path[0]?.percentage
+        //       per,
+        //     };
+        //   })
+        // );
+
         // Use this to display swap paths on the UI
         let pathList: RouteInfo[] = [];
 
         actions.forEach((action) => {
-          const path = getRoutePath(action.actions, tokenListDB);
-          const output = action.output.toFixed(3);
-          const dex = action.dex;
-          pathList.push({ path, output, dex });
+          const generatePath = getRoutePath(action.view);
+          const path = normalizeRoutesPath(generatePath, tokenListDB);
+          const output = action?.output.toFixed(3);
+          const dex = action?.dex;
+          const routePercentage = generatePath.map((data) => data?.percentage);
+
+          pathList.push({ path, output, dex, routePercentage });
         });
 
         setPaths(pathList);
 
-        const txs = actions[0].txs;
+        // const txs = actions[0].view;
+        const txs = await arbitoor.generateTransactions({
+          tokenIn: payToken?.address,
+          tokenOut: receiveToken?.address,
+          exchange: actions[0]?.dex,
+          swapsToDo: actions[0]?.view,
+          amountIn: inputAmountAdjusted.toFixed(),
+          slippageTolerance: slippageValue,
+        });
         console.log({ txs });
         setTransactionPayload(txs);
 
