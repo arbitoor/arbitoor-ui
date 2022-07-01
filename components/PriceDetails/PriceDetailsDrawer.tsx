@@ -36,7 +36,7 @@ function PriceDetailsDrawer() {
           Minimum Received :{' '}
           {paths.length
             ? minReceivedAmount > 0
-              ? minReceivedAmount
+              ? minReceivedAmount.toFixed(4)
               : '--'
             : '--'}
         </Text>

@@ -84,14 +84,12 @@ function SlippageSettings() {
                 <Text m="8px">Slippage Settings</Text>
                 <Flex justifyContent="space-around" m="16px 0">
                   {slippageOptions.map((option: number, idx: number) => (
-                    <>
-                      <SlippageValueButton
-                        key={option}
-                        text={`${option} %`}
-                        margin={idx !== slippageOptions.length ? 2 : undefined}
-                        onClick={() => handleCustomSlippageValue(option)}
-                      />
-                    </>
+                    <SlippageValueButton
+                      key={option}
+                      text={`${option} %`}
+                      margin={idx !== slippageOptions.length ? 2 : undefined}
+                      onClick={() => handleCustomSlippageValue(option)}
+                    />
                   ))}
                 </Flex>
                 <InputGroup border="1px solid #d09a4b" borderRadius="6px">
