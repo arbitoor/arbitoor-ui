@@ -1,15 +1,21 @@
 import React from 'react';
-import Link from 'next/link';
-import { Flex, Text } from '@chakra-ui/react';
+import NextLink from 'next/link';
+import { Flex, Text, LinkProps, Link } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import { links } from '../utils/navLinks';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface Props {
   styleClass?: string;
 }
 
+const activeLinkStyles: LinkProps = {
+  color: '#de8f17',
+  opacity: '1',
+};
+
 export default function NavLinks({ styleClass }: Props) {
+  const { asPath } = useRouter();
   return (
     <Flex
       flex="0.5"
@@ -23,15 +29,23 @@ export default function NavLinks({ styleClass }: Props) {
           alignItems="center"
           cursor="pointer"
           color="whitesmoke"
-          opacity="0.6"
+          opacity="0.75"
           _hover={{ color: '#de8f17', opacity: '1' }}
+          sx={asPath === link.url ? activeLinkStyles : undefined}
         >
           <FontAwesomeIcon icon={link.icon} height="18px" width="18px" />
-          <Link href={`${link.url}`}>
-            <Text fontSize="md" ml="6px">
+          <NextLink href={`${link.url}`}>
+            <Link
+              fontSize="md"
+              ml="6px"
+              _hover={{ textDecoration: 'none' }}
+              href={`${link.url}`}
+              isExternal={link.external}
+              _focus={{ border: 'none' }}
+            >
               {link.text}
-            </Text>
-          </Link>
+            </Link>
+          </NextLink>
         </Flex>
       ))}
     </Flex>
