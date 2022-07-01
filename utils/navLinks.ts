@@ -11,7 +11,7 @@ export const links = [
   {
     id: 3,
     text: 'Docs',
-    url: 'https://arbitoor-aggregator.gitbook.io/arbitoor',
+    url: 'https://docs.arbitoor.com',
     icon: faFile,
     external: true
 
