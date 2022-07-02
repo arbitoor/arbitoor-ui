@@ -5,10 +5,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styles from './SpinningRefresh.module.css';
 import { Button } from '@chakra-ui/react';
 
-function SpinningRefresh() {
+interface Props {
+  fetchRoutes: () => void;
+}
+
+function SpinningRefresh({ fetchRoutes }: Props) {
   return (
     <div>
-      <Button bg="transparent" _hover={{ background: '#de8f1761' }}>
+      <Button
+        bg="transparent"
+        _hover={{ background: '#de8f1761' }}
+        onClick={fetchRoutes}
+      >
         <FontAwesomeIcon
           icon={faRotateRight}
           color="whitesmoke"
