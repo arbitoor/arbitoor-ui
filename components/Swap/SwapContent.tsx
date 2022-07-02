@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Flex, Box, Input, Text, chakra } from '@chakra-ui/react';
+import { Flex, Box, Input, Text, chakra, Button } from '@chakra-ui/react';
 import { providers } from 'near-api-js';
 import TokenList from '../TokenList/TokenList';
 import ToggleToken from '../ToggleToken/ToggleToken';
@@ -124,6 +124,10 @@ function SwapContent() {
   const inMemoryProvider = new InMemoryProvider(provider, tokenMap);
 
   useEffect(() => {
+    fetchStorageBalance();
+  }, [receiveToken, authKey]);
+
+  useEffect(() => {
     if (inputAmount !== '') {
       memoizedFetcher(inputAmount);
     }
@@ -147,10 +151,6 @@ function SwapContent() {
     setUserPayTokenBalance('0.0000');
     setUserReceiveTokenBalance('0.0000');
   }, [payToken, receiveToken, authKey]);
-
-  useEffect(() => {
-    fetchStorageBalance();
-  }, [receiveToken, authKey]);
 
   async function getTokenBalance() {
     try {
@@ -310,16 +310,32 @@ function SwapContent() {
 
   function handleInputChange(evt: any) {
     const { value } = evt.target;
-    if (value > 0 || value === '') {
-      setInputAmount(value);
+    if (value <= 0) {
+      return;
     }
+    setInputAmount(value);
+  }
+
+  useEffect(() => {
     if (inputError) {
       setInputError('');
     }
-    if (+userPayTokenBalance < +value) {
+    if (+userPayTokenBalance < +inputAmount) {
       setInputError('Insufficient funds to make this transaction');
     }
+  }, [inputAmount, userPayTokenBalance]);
+
+  function handleHalfValue() {
+    if (userPayTokenBalance) {
+      setInputAmount(Math.floor(+userPayTokenBalance / 2).toFixed(2));
+    }
   }
+  function handleMaxValue() {
+    if (userPayTokenBalance) {
+      setInputAmount(Math.floor(+userPayTokenBalance).toFixed(2));
+    }
+  }
+
   async function handleSwap() {
     console.log('tokens', payToken, receiveToken);
 
@@ -349,14 +365,24 @@ function SwapContent() {
             alignItems="center"
           >
             <Box>
-              <SpinningRefresh  />
+              <SpinningRefresh
+                fetchRoutes={() => {
+                  if (inputAmount) memoizedFetcher(inputAmount);
+                }}
+              />
             </Box>
             <Box>
               <SlippageSettings />
             </Box>
           </Flex>
         </Flex>
-        <SwapSide swapSide="pay" balanceAmount={userPayTokenBalance} />
+        <SwapSide
+          swapSide="pay"
+          balanceAmount={userPayTokenBalance}
+          halfValueHandler={handleHalfValue}
+          maxValueHandler={handleMaxValue}
+        />
+
         <Box
           paddingX="14px"
           backgroundColor="#101010"
@@ -438,9 +464,6 @@ function SwapContent() {
           (authKey?.accountId && !inputAmount) ||
           (authKey?.accountId && inputError.length)
         }
-        // isSignedIn={selector.isSignedIn()}
-        // swapHandler={selector.isSignedIn() ? handleSwap : handleSignIn}
-        // disabled={selector.isSignedIn() && !paths?.length}
       />
     </>
   );

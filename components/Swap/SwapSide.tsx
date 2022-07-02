@@ -1,12 +1,19 @@
 import React from 'react';
-import { Flex, Text, chakra, Box } from '@chakra-ui/react';
+import { Flex, Text, chakra, Box, Button } from '@chakra-ui/react';
 
 interface Props {
   swapSide: string;
   balanceAmount: string;
+  maxValueHandler?: () => void;
+  halfValueHandler?: () => void;
 }
 
-function SwapSide({ swapSide, balanceAmount }: Props) {
+function SwapSide({
+  swapSide,
+  balanceAmount,
+  maxValueHandler,
+  halfValueHandler,
+}: Props) {
   return (
     <Flex
       justifyContent="space-between"
@@ -20,7 +27,7 @@ function SwapSide({ swapSide, balanceAmount }: Props) {
       <Text fontWeight="600" fontSize="0.875rem" lineHeight="1.25rem">
         <chakra.span>You {swapSide}</chakra.span>
       </Text>
-      <Box>
+      <Flex>
         <Flex
           width="100%"
           justifyContent="space-between"
@@ -32,7 +39,31 @@ function SwapSide({ swapSide, balanceAmount }: Props) {
         >
           <chakra.span>Balance : {balanceAmount}</chakra.span>
         </Flex>
-      </Box>
+        {swapSide === 'pay' ? (
+          <Flex marginLeft="6px">
+            <Button
+              variant="link"
+              _focus={{ border: 'none' }}
+              color="#d09a4b"
+              fontSize="0.75rem"
+              minWidth="2rem"
+              onClick={halfValueHandler}
+            >
+              Half
+            </Button>
+            <Button
+              variant="link"
+              _focus={{ border: 'none' }}
+              color="#d09a4b"
+              fontSize="0.75rem"
+              minWidth="2rem"
+              onClick={maxValueHandler}
+            >
+              Max
+            </Button>
+          </Flex>
+        ) : null}
+      </Flex>
     </Flex>
   );
 }
