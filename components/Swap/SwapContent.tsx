@@ -283,7 +283,7 @@ function SwapContent() {
         });
         console.log({ txs });
         setTransactionPayload(txs);
-        console.log('inp', inputAmountAdjusted.toFixed());
+
         setLoading(false);
       } catch (error) {
         console.error(error);
