@@ -283,7 +283,7 @@ function SwapContent() {
         });
         console.log({ txs });
         setTransactionPayload(txs);
-        console.log('inp', inputAmountAdjusted.toFixed());
+
         setLoading(false);
       } catch (error) {
         console.error(error);
@@ -327,12 +327,12 @@ function SwapContent() {
 
   function handleHalfValue() {
     if (userPayTokenBalance) {
-      setInputAmount(Math.floor(+userPayTokenBalance / 2).toFixed(2));
+      setInputAmount((+userPayTokenBalance / 2).toString());
     }
   }
   function handleMaxValue() {
     if (userPayTokenBalance) {
-      setInputAmount(Math.floor(+userPayTokenBalance).toFixed(2));
+      setInputAmount(userPayTokenBalance);
     }
   }
 
