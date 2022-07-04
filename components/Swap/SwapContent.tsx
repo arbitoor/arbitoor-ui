@@ -331,12 +331,12 @@ function SwapContent() {
   }, [inputAmount, userPayTokenBalance]);
 
   function handleHalfValue() {
-    if (userPayTokenBalance) {
+    if (userPayTokenBalance && +userPayTokenBalance > 0) {
       setInputAmount((+userPayTokenBalance / 2).toString());
     }
   }
   function handleMaxValue() {
-    if (userPayTokenBalance) {
+    if (userPayTokenBalance && +userPayTokenBalance > 0) {
       setInputAmount(userPayTokenBalance);
     }
   }
