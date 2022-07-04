@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Flex, Box, Input, Text, chakra, Button } from '@chakra-ui/react';
+import {
+  Flex,
+  Box,
+  Input,
+  Text,
+  chakra,
+  Button,
+  Spinner,
+} from '@chakra-ui/react';
 import { providers } from 'near-api-js';
 import TokenList from '../TokenList/TokenList';
 import ToggleToken from '../ToggleToken/ToggleToken';
@@ -105,7 +113,9 @@ function SwapContent() {
   );
   const [actions, setActions] = useState<any>();
   const [loading, setLoading] = useState<boolean>();
+  const [globalLoader, setGlobalLoader] = useState<boolean>();
   const [inputError, setInputError] = useState<string>('');
+  const [inputAmountAdjusted, setInputAmountAdjusted] = useState<string>('');
 
   const storageAccount = localStorage.getItem('accountId');
 
@@ -123,9 +133,15 @@ function SwapContent() {
 
   const inMemoryProvider = new InMemoryProvider(provider, tokenMap);
 
-  useEffect(() => {
-    fetchStorageBalance();
-  }, [receiveToken, authKey]);
+  const arbitoor = new Arbitoor({
+    accountProvider: inMemoryProvider,
+    user: localStorage.getItem('accountId')!,
+    routeCacheDuration: 1000,
+  });
+
+  // useEffect(() => {
+  //   fetchStorageBalance();
+  // }, [receiveToken, authKey]);
 
   useEffect(() => {
     if (inputAmount !== '') {
@@ -196,40 +212,41 @@ function SwapContent() {
     }
   }
 
-  async function fetchStorageBalance() {
-    if (receiveToken && storageAccount) {
-      const storage = inMemoryProvider.ftGetStorageBalance(
-        receiveToken.address,
-        storageAccount
-      );
-
-      if (!storage) {
-        await inMemoryProvider.ftFetchStorageBalance(
-          receiveToken.address,
-          storageAccount
-        );
-      }
-    }
-  }
+  // async function fetchStorageBalance() {
+  //   if (receiveToken && storageAccount) {
+  //     console.log(
+  //       'str',
+  //       inMemoryProvider.ftGetStorageBalance(
+  //         receiveToken?.address,
+  //         authKey?.accountId
+  //       )
+  //     );
+  //     const storage = inMemoryProvider.ftGetStorageBalance(
+  //       receiveToken.address,
+  //       storageAccount
+  //     );
+  //     // debugger;
+  //     if (!storage) {
+  //       await inMemoryProvider.ftFetchStorageBalance(
+  //         receiveToken.address,
+  //         storageAccount
+  //       );
+  //     }
+  //   }
+  // }
 
   async function findRoutes(input: string) {
     if (input && payToken && receiveToken && selector) {
       const inputAmountAdjusted = new BigNumber(10)
         .pow(payToken.decimals)
         .multipliedBy(new BigNumber(input));
-
+      setInputAmountAdjusted(inputAmountAdjusted.toFixed());
       try {
         // const provider = new providers.JsonRpcProvider({
         //   url: 'https://near-mainnet--rpc--archive.datahub.figment.io/apikey/e7051fbb390e25bd106777e8194529c7',
         // });
 
         await inMemoryProvider.fetchPools();
-
-        const arbitoor = new Arbitoor({
-          accountProvider: inMemoryProvider,
-          user: localStorage.getItem('accountId')!,
-          routeCacheDuration: 1000,
-        });
 
         console.log('generating actions');
         const actions = await arbitoor.computeRoutes({
@@ -272,22 +289,10 @@ function SwapContent() {
 
         setPaths(pathList);
 
-        // const txs = actions[0].view;
-        const txs = await arbitoor.generateTransactions({
-          tokenIn: payToken?.address,
-          tokenOut: receiveToken?.address,
-          exchange: actions[0]?.dex,
-          swapsToDo: actions[0]?.view,
-          amountIn: inputAmountAdjusted.toFixed(),
-          slippageTolerance: slippageValue,
-        });
-        console.log({ txs });
-        setTransactionPayload(txs);
-
-        setLoading(false);
+        // setLoading(false);
       } catch (error) {
         console.error(error);
-        setLoading(false);
+        // setLoading(false);
       }
     }
   }
@@ -338,14 +343,59 @@ function SwapContent() {
 
   async function handleSwap() {
     console.log('tokens', payToken, receiveToken);
-
-    const wallet = await selector.wallet();
-
-    if (actions[0]) {
-      await wallet.signAndSendTransactions({
-        transactions: transactionPayload,
-      });
+    // fetchStorageBalance();
+    if (receiveToken && storageAccount) {
+      const storage = inMemoryProvider.ftGetStorageBalance(
+        receiveToken.address,
+        storageAccount
+      );
+      if (!storage) {
+        await inMemoryProvider.ftFetchStorageBalance(
+          receiveToken.address,
+          storageAccount
+        );
+      }
     }
+
+    // const txs = actions[0].view;
+    setGlobalLoader(true);
+    try {
+      const txs = await arbitoor.generateTransactions({
+        tokenIn: payToken?.address,
+        tokenOut: receiveToken?.address,
+        exchange: actions[0]?.dex,
+        swapsToDo: actions[0]?.view,
+        amountIn: inputAmountAdjusted,
+        slippageTolerance: slippageValue,
+      });
+      console.log({ txs });
+      // setTransactionPayload(txs);
+      const wallet = await selector.wallet();
+
+      if (actions[0]) {
+        await wallet.signAndSendTransactions({
+          transactions: txs,
+          // transactions: transactionPayload,
+        });
+        setGlobalLoader(false);
+      }
+    } catch (error) {
+      console.error(error);
+      setGlobalLoader(false);
+    }
+  }
+  if (globalLoader) {
+    return (
+      <Flex justifyContent="center">
+        <Spinner
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="#F18652"
+          size="xl"
+        />
+      </Flex>
+    );
   }
   return (
     <>
