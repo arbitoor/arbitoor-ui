@@ -100,6 +100,16 @@ function SwapContent() {
     routeCacheDuration: 1000,
   });
 
+  const arbitoor = new Arbitoor({
+    accountProvider: inMemoryProvider,
+    user: localStorage.getItem('accountId')!,
+    routeCacheDuration: 1000,
+  });
+
+  // useEffect(() => {
+  //   fetchStorageBalance();
+  // }, [receiveToken, authKey]);
+
   useEffect(() => {
     if (+inputAmount > 0) {
       memoizedFetcher(inputAmount);
@@ -288,6 +298,46 @@ function SwapContent() {
         transactions: txs,
       });
     }
+
+    // const txs = actions[0].view;
+    setGlobalLoader(true);
+    try {
+      const txs = await arbitoor.generateTransactions({
+        tokenIn: payToken?.address,
+        tokenOut: receiveToken?.address,
+        exchange: actions[0]?.dex,
+        swapsToDo: actions[0]?.view,
+        amountIn: inputAmountAdjusted,
+        slippageTolerance: slippageValue,
+      });
+      console.log({ txs });
+      // setTransactionPayload(txs);
+      const wallet = await selector.wallet();
+
+      if (actions[0]) {
+        await wallet.signAndSendTransactions({
+          transactions: txs,
+          // transactions: transactionPayload,
+        });
+        setGlobalLoader(false);
+      }
+    } catch (error) {
+      console.error(error);
+      setGlobalLoader(false);
+    }
+  }
+  if (globalLoader) {
+    return (
+      <Flex justifyContent="center">
+        <Spinner
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="#F18652"
+          size="xl"
+        />
+      </Flex>
+    );
   }
 
   if (globalLoader) {

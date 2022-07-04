@@ -3,6 +3,9 @@ import { Flex } from '@chakra-ui/react';
 // import TitleContent from './TitleContent';
 import SwapBody from './SwapBody';
 import TransactionStatus from '../TransactionStatus/TransactionStatus';
+import { useWalletSelector } from '../../hooks/WalletSelectorContext';
+import { useGlobalStore } from '../../utils/globalStore';
+import { TokenMetadata } from '../../utils/Database';
 
 import { useInMemoryProvider } from '../../hooks/useInMemoryProvider';
 
