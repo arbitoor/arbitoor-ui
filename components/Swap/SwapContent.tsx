@@ -20,6 +20,8 @@ import {
   Arbitoor,
   getRoutePath,
   InMemoryProvider,
+  getSpinMarkets,
+  RouteInfo as PathInfo,
 } from '@arbitoor/arbitoor-core';
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
@@ -111,7 +113,7 @@ function SwapContent() {
   const [transactionPayload, setTransactionPayload] = useState<Transaction[]>(
     []
   );
-  const [actions, setActions] = useState<any>();
+  const [actions, setActions] = useState<PathInfo[]>();
   const [loading, setLoading] = useState<boolean>();
   const [globalLoader, setGlobalLoader] = useState<boolean>();
   const [inputError, setInputError] = useState<string>('');
@@ -130,14 +132,6 @@ function SwapContent() {
     map.set(item.address, item);
     return map;
   }, new Map<string, TokenMetadata>());
-
-  const inMemoryProvider = new InMemoryProvider(provider, tokenMap);
-
-  const arbitoor = new Arbitoor({
-    accountProvider: inMemoryProvider,
-    user: localStorage.getItem('accountId')!,
-    routeCacheDuration: 1000,
-  });
 
   // useEffect(() => {
   //   fetchStorageBalance();
@@ -241,6 +235,29 @@ function SwapContent() {
         .pow(payToken.decimals)
         .multipliedBy(new BigNumber(input));
       setInputAmountAdjusted(inputAmountAdjusted.toFixed());
+
+      //TODO:to refactor; optimize code to avoid repetation
+      // const spinMarkets = await getSpinMarkets(provider);
+      const spinMarkets = (await getSpinMarkets(provider)).filter(
+        (market) =>
+          market.base.symbol !== 'NEAR' && market.quote.symbol !== 'NEAR'
+      );
+
+      console.log('spinMar', spinMarkets);
+
+      const inMemoryProvider = new InMemoryProvider(
+        provider,
+        tokenMap,
+        spinMarkets
+      );
+
+      console.log('inM', inMemoryProvider);
+
+      const arbitoor = new Arbitoor({
+        accountProvider: inMemoryProvider,
+        user: localStorage.getItem('accountId')!,
+        routeCacheDuration: 1000,
+      });
       try {
         // const provider = new providers.JsonRpcProvider({
         //   url: 'https://near-mainnet--rpc--archive.datahub.figment.io/apikey/e7051fbb390e25bd106777e8194529c7',
@@ -253,7 +270,6 @@ function SwapContent() {
           inputToken: payToken.address,
           outputToken: receiveToken.address,
           inputAmount: inputAmountAdjusted.toFixed(),
-          slippageTolerance: slippageValue,
         });
         setActions(actions);
 
@@ -275,18 +291,31 @@ function SwapContent() {
         // );
 
         // Use this to display swap paths on the UI
+        // let pathList: RouteInfo[] = [];
         let pathList: RouteInfo[] = [];
 
-        actions.forEach((action) => {
-          const generatePath = getRoutePath(action.view);
+        // actions.forEach((action) => {
+        //   const generatePath = getRoutePath(action);
+        //   const path = normalizeRoutesPath(generatePath, tokenListDB);
+        //   const output = action?.output.toFixed(3);
+        //   const dex = action?.dex;
+        //   const routePercentage = generatePath.map((data) => data?.percentage);
+
+        //   pathList.push({ path, output, dex, routePercentage });
+        // });
+
+        for (const route of actions) {
+          console.log('dex', route.dex, 'output', route.output.toString());
+
+          const generatePath = getRoutePath(route);
           const path = normalizeRoutesPath(generatePath, tokenListDB);
-          const output = action?.output.toFixed(3);
-          const dex = action?.dex;
+          console.log('path', JSON.stringify(path, undefined, 4));
+          const output = route?.output.toFixed(3);
+          const dex = route?.dex;
           const routePercentage = generatePath.map((data) => data?.percentage);
 
           pathList.push({ path, output, dex, routePercentage });
-        });
-
+        }
         setPaths(pathList);
 
         // setLoading(false);
@@ -344,6 +373,23 @@ function SwapContent() {
   async function handleSwap() {
     console.log('tokens', payToken, receiveToken);
     // fetchStorageBalance();
+    const spinMarkets = (await getSpinMarkets(provider)).filter(
+      (market) =>
+        market.base.symbol !== 'NEAR' && market.quote.symbol !== 'NEAR'
+    );
+
+    const inMemoryProvider = new InMemoryProvider(
+      provider,
+      tokenMap,
+      spinMarkets
+    );
+
+    const arbitoor = new Arbitoor({
+      accountProvider: inMemoryProvider,
+      user: localStorage.getItem('accountId')!,
+      routeCacheDuration: 1000,
+    });
+
     if (receiveToken && storageAccount) {
       const storage = inMemoryProvider.ftGetStorageBalance(
         receiveToken.address,
@@ -358,30 +404,52 @@ function SwapContent() {
     }
 
     // const txs = actions[0].view;
-    setGlobalLoader(true);
-    try {
-      const txs = await arbitoor.generateTransactions({
-        tokenIn: payToken?.address,
-        tokenOut: receiveToken?.address,
-        exchange: actions[0]?.dex,
-        swapsToDo: actions[0]?.view,
-        amountIn: inputAmountAdjusted,
-        slippageTolerance: slippageValue,
-      });
-      console.log({ txs });
-      // setTransactionPayload(txs);
-      const wallet = await selector.wallet();
+    // setLoading(true);
+    // setGlobalLoader(true);
+    if (actions) {
+      for (const route of actions) {
+        console.log('dex', route.dex, 'output', route.output.toString());
+        const txs = await arbitoor.generateTransactions({
+          routeInfo: route,
+          slippageTolerance: slippageValue,
+        });
+        const wallet = await selector.wallet();
 
-      if (actions[0]) {
         await wallet.signAndSendTransactions({
           transactions: txs,
-          // transactions: transactionPayload,
         });
-        setGlobalLoader(false);
       }
-    } catch (error) {
-      console.error(error);
-      setGlobalLoader(false);
+      // try {
+      //   // const txs = await arbitoor.generateTransactions({
+      //   //   tokenIn: payToken?.address,
+      //   //   tokenOut: receiveToken?.address,
+      //   //   exchange: actions[0]?.dex,
+      //   //   swapsToDo: actions[0]?.view,
+      //   //   amountIn: inputAmountAdjusted,
+      //   //   slippageTolerance: slippageValue,
+      //   // });
+      //   // const txs = await arbitoor.generateTransactions({
+      //   //   routeInfo: actions as PathInfo,
+      //   //   slippageTolerance: slippageValue,
+      //   // });
+      //   console.log({ txs });
+
+      //   // setTransactionPayload(txs);
+      //   const wallet = await selector.wallet();
+
+      //   if (actions) {
+      //     await wallet.signAndSendTransactions({
+      //       transactions: txs,
+      //       // transactions: transactionPayload,
+      //     });
+      //     setLoading(false);
+      //     setGlobalLoader(false);
+      //   }
+      // } catch (error) {
+      //   console.error(error);
+      //   setLoading(false);
+      //   setGlobalLoader(false);
+      // }
     }
   }
   if (globalLoader) {
