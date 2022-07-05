@@ -1,38 +1,26 @@
 import React, { useEffect } from 'react';
-import { Flex, Button } from '@chakra-ui/react';
-import { providers } from 'near-api-js';
-import { InMemoryProvider } from '@arbitoor/arbitoor-core';
-import TitleContent from './TitleContent';
+import { Flex } from '@chakra-ui/react';
+// import TitleContent from './TitleContent';
 import SwapBody from './SwapBody';
 import TransactionStatus from '../TransactionStatus/TransactionStatus';
-import { useWalletSelector } from '../../hooks/WalletSelectorContext';
-import { useGlobalStore } from '../../utils/globalStore';
-import { TokenMetadata } from '../../utils/Database';
+
+import { useInMemoryProvider } from '../../hooks/useInMemoryProvider';
 
 function Swap() {
-  const { selector } = useWalletSelector();
-  const { network } = selector.options;
-
-  const tokenListDB = useGlobalStore((state) => state.tokenListDB);
-
-  const provider = new providers.JsonRpcProvider({
-    url: network.nodeUrl,
-  });
-  const tokenMap = tokenListDB.reduce((map, item) => {
-    map.set(item.address, item);
-    return map;
-  }, new Map<string, TokenMetadata>());
-  const inMemoryProvider = new InMemoryProvider(provider, tokenMap);
+  const { memoizedInMemoryProvider, isLoading } = useInMemoryProvider();
 
   useEffect(() => {
-    let timer = setInterval(async () => {
-      //TODO: optimize this using service workers
-      await inMemoryProvider.fetchPools();
-    }, 10000);
+    let timer: any;
+    if (!isLoading) {
+      timer = setInterval(async () => {
+        //TODO: optimize this using service workers
+        await memoizedInMemoryProvider.fetchPools();
+      }, 10000);
+    }
     return () => {
       if (timer) clearInterval(timer);
     };
-  }, []);
+  }, [isLoading]);
 
   return (
     <Flex direction="column" justifyContent="space-between">

@@ -13,12 +13,34 @@ export interface RouteInfo {
 function BestPrice({ routes }: { routes: [RouteInfo, RouteInfo] }) {
   return (
     <Box
-      maxHeight="163px"
+      maxHeight="170px"
       height="100%"
-      overflow={routes?.length > 2 ? 'auto' : 'hidden'}
+      overflowY={routes?.length > 2 ? 'auto' : 'hidden'}
+      css={{
+        '&::-webkit-scrollbar': {
+          width: '6px',
+          // backgroundColor: '#F5F5F5',
+        },
+        '&::-webkit-scrollbar-track': {
+          width: '10px',
+          borderRadius: '10px',
+          backgroundColor: '#f5f5f5af',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          background: 'gray',
+          borderRadius: '10px',
+        },
+      }}
     >
-      <Box position="relative" height="163px" w="100%">
-        <Box height="148px" w="100%">
+      <Box
+        position="relative"
+        //  height="163px"
+        w="100%"
+      >
+        <Box
+          //  height="148px"
+          w="100%"
+        >
           {routes[0].path?.length ? (
             routes.map((route, idx) => {
               return (
@@ -42,16 +64,13 @@ function BestPrice({ routes }: { routes: [RouteInfo, RouteInfo] }) {
                   key={idx}
                   css={{
                     ':nth-of-type(1)': {
+                      marginTop: '12px',
                       border: 'solid 3px transparent',
                       backgroundImage:
                         'linear-gradient(#101010, #101010), radial-gradient(circle at top left, #ff0078,#ffb720)',
                       backgroundOrigin: 'border-box',
                       backgroundClip: 'content-box, border-box',
                     },
-                    //   ':nth-of-type(2)': {
-                    //     top: '102px',
-                    //     border: 'none',
-                    //   },
                   }}
                 >
                   {route.output !== '0' && route.path?.length ? (

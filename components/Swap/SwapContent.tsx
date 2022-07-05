@@ -1,13 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  Flex,
-  Box,
-  Input,
-  Text,
-  chakra,
-  Button,
-  Spinner,
-} from '@chakra-ui/react';
+import { Flex, Box, Input, Text, Spinner } from '@chakra-ui/react';
 import { providers } from 'near-api-js';
 import TokenList from '../TokenList/TokenList';
 import ToggleToken from '../ToggleToken/ToggleToken';
@@ -19,8 +11,6 @@ import { useWalletSelector } from '../../hooks/WalletSelectorContext';
 import {
   Arbitoor,
   getRoutePath,
-  InMemoryProvider,
-  getSpinMarkets,
   RouteInfo as PathInfo,
 } from '@arbitoor/arbitoor-core';
 import BigNumber from 'bignumber.js';
@@ -32,11 +22,7 @@ import SpinningRefresh from '../SpinningRefresh/SpinningRefresh';
 import SlippageSettings from '../SlippageSettings/SlippageSettings';
 import { useGlobalStore } from '../../utils/globalStore';
 import { TokenMetadata } from '../../utils/Database';
-
-// export interface SwapRoute {
-//   output: string;
-//   actions: EstimateSwapView[];
-// }
+import { useInMemoryProvider } from '../../hooks/useInMemoryProvider';
 
 /**
  * Returns a string representation of swap path
@@ -45,29 +31,7 @@ import { TokenMetadata } from '../../utils/Database';
  * @param actions
  * @returns
  */
-// function getRoutePath(actions: any, tokenList: TokenMetadata[]) {
-//   const routes: string[] = [];
 
-//   for (let i = 0; i < actions.length; i++) {
-//     const action = actions[i];
-//     const route = action
-//       .nodeRoute!.map((token: any) => {
-//         const saved = tokenList.find((savedToken) => {
-//           return savedToken.address == token;
-//         });
-
-//         return saved ? saved.symbol : token.slice(0, 10);
-//       })
-//       .join(' -> ');
-
-//     if (i === 0 || routes[routes.length - 1] !== route) {
-//       routes.push(route);
-//     }
-//   }
-
-//   // return routes.join(', ').split(' -> ');
-//   return routes;
-// }
 function normalizeRoutesPath(actions: any, tokenList: TokenMetadata[]) {
   const routes: string[] = [];
   actions.forEach((action: any) => {
@@ -90,9 +54,9 @@ function normalizeRoutesPath(actions: any, tokenList: TokenMetadata[]) {
 function SwapContent() {
   const tokenListDB = useGlobalStore((state) => state.tokenListDB);
 
-  const [payToken, setPayToken] = useState<TokenMetadata>(tokenListDB[53]);
+  const [payToken, setPayToken] = useState<TokenMetadata>(tokenListDB[47]);
   const [receiveToken, setReceiveToken] = useState<TokenMetadata>(
-    tokenListDB[47]
+    tokenListDB[46]
   );
   const [userPayTokenBalance, setUserPayTokenBalance] =
     useState<string>('0.0000');
@@ -122,6 +86,7 @@ function SwapContent() {
   const storageAccount = localStorage.getItem('accountId');
 
   const { selector, modal, authKey, accountId } = useWalletSelector();
+  const { memoizedInMemoryProvider, isLoading } = useInMemoryProvider();
 
   const { network } = selector.options;
   const provider = new providers.JsonRpcProvider({
@@ -133,9 +98,11 @@ function SwapContent() {
     return map;
   }, new Map<string, TokenMetadata>());
 
-  // useEffect(() => {
-  //   fetchStorageBalance();
-  // }, [receiveToken, authKey]);
+  const arbitoor = new Arbitoor({
+    accountProvider: memoizedInMemoryProvider,
+    user: localStorage.getItem('accountId')!,
+    routeCacheDuration: 1000,
+  });
 
   useEffect(() => {
     if (inputAmount !== '') {
@@ -148,7 +115,7 @@ function SwapContent() {
       fetcherWithDebounce(input);
       setPaths([]);
     },
-    [payToken, receiveToken]
+    [payToken, receiveToken, isLoading]
   );
 
   const fetcherWithDebounce = _.debounce(findRoutes, 1000);
@@ -206,29 +173,6 @@ function SwapContent() {
     }
   }
 
-  // async function fetchStorageBalance() {
-  //   if (receiveToken && storageAccount) {
-  //     console.log(
-  //       'str',
-  //       inMemoryProvider.ftGetStorageBalance(
-  //         receiveToken?.address,
-  //         authKey?.accountId
-  //       )
-  //     );
-  //     const storage = inMemoryProvider.ftGetStorageBalance(
-  //       receiveToken.address,
-  //       storageAccount
-  //     );
-  //     // debugger;
-  //     if (!storage) {
-  //       await inMemoryProvider.ftFetchStorageBalance(
-  //         receiveToken.address,
-  //         storageAccount
-  //       );
-  //     }
-  //   }
-  // }
-
   async function findRoutes(input: string) {
     if (input && payToken && receiveToken && selector) {
       const inputAmountAdjusted = new BigNumber(10)
@@ -236,34 +180,8 @@ function SwapContent() {
         .multipliedBy(new BigNumber(input));
       setInputAmountAdjusted(inputAmountAdjusted.toFixed());
 
-      //TODO:to refactor; optimize code to avoid repetation
-      // const spinMarkets = await getSpinMarkets(provider);
-      const spinMarkets = (await getSpinMarkets(provider)).filter(
-        (market) =>
-          market.base.symbol !== 'NEAR' && market.quote.symbol !== 'NEAR'
-      );
-
-      console.log('spinMar', spinMarkets);
-
-      const inMemoryProvider = new InMemoryProvider(
-        provider,
-        tokenMap,
-        spinMarkets
-      );
-
-      console.log('inM', inMemoryProvider);
-
-      const arbitoor = new Arbitoor({
-        accountProvider: inMemoryProvider,
-        user: localStorage.getItem('accountId')!,
-        routeCacheDuration: 1000,
-      });
       try {
-        // const provider = new providers.JsonRpcProvider({
-        //   url: 'https://near-mainnet--rpc--archive.datahub.figment.io/apikey/e7051fbb390e25bd106777e8194529c7',
-        // });
-
-        await inMemoryProvider.fetchPools();
+        await memoizedInMemoryProvider.fetchPools();
 
         console.log('generating actions');
         const actions = await arbitoor.computeRoutes({
@@ -275,43 +193,16 @@ function SwapContent() {
 
         console.log('actions', actions);
 
-        // console.log(
-        //   'outputs',
-        //   actions.map((route) => {
-        //     const path = getRoutePath(route.view);
-        //     const norm = normalizeRoutesPath(path, tokenListDB);
-        //     const per = path.map((data) => data.percentage);
-        //     return {
-        //       output: route.output.toString(),
-        //       path,
-        //       // path[0]?.percentage
-        //       per,
-        //     };
-        //   })
-        // );
-
-        // Use this to display swap paths on the UI
-        // let pathList: RouteInfo[] = [];
         let pathList: RouteInfo[] = [];
 
-        // actions.forEach((action) => {
-        //   const generatePath = getRoutePath(action);
-        //   const path = normalizeRoutesPath(generatePath, tokenListDB);
-        //   const output = action?.output.toFixed(3);
-        //   const dex = action?.dex;
-        //   const routePercentage = generatePath.map((data) => data?.percentage);
+        for (const action of actions) {
+          console.log('dex', action.dex, 'output', action.output.toString());
 
-        //   pathList.push({ path, output, dex, routePercentage });
-        // });
-
-        for (const route of actions) {
-          console.log('dex', route.dex, 'output', route.output.toString());
-
-          const generatePath = getRoutePath(route);
+          const generatePath = getRoutePath(action);
           const path = normalizeRoutesPath(generatePath, tokenListDB);
-          console.log('path', JSON.stringify(path, undefined, 4));
-          const output = route?.output.toFixed(3);
-          const dex = route?.dex;
+
+          const output = action?.output.toFixed(3);
+          const dex = action?.dex;
           const routePercentage = generatePath.map((data) => data?.percentage);
 
           pathList.push({ path, output, dex, routePercentage });
@@ -327,7 +218,6 @@ function SwapContent() {
   }
 
   const handleSignIn = () => {
-    // selector.show();
     modal.show();
   };
 
@@ -372,86 +262,33 @@ function SwapContent() {
 
   async function handleSwap() {
     console.log('tokens', payToken, receiveToken);
-    // fetchStorageBalance();
-    const spinMarkets = (await getSpinMarkets(provider)).filter(
-      (market) =>
-        market.base.symbol !== 'NEAR' && market.quote.symbol !== 'NEAR'
-    );
-
-    const inMemoryProvider = new InMemoryProvider(
-      provider,
-      tokenMap,
-      spinMarkets
-    );
-
-    const arbitoor = new Arbitoor({
-      accountProvider: inMemoryProvider,
-      user: localStorage.getItem('accountId')!,
-      routeCacheDuration: 1000,
-    });
 
     if (receiveToken && storageAccount) {
-      const storage = inMemoryProvider.ftGetStorageBalance(
+      const storage = memoizedInMemoryProvider.ftGetStorageBalance(
         receiveToken.address,
         storageAccount
       );
       if (!storage) {
-        await inMemoryProvider.ftFetchStorageBalance(
+        await memoizedInMemoryProvider.ftFetchStorageBalance(
           receiveToken.address,
           storageAccount
         );
       }
     }
+    if (actions && actions[0]) {
+      const txs = await arbitoor.generateTransactions({
+        routeInfo: actions[0],
+        slippageTolerance: slippageValue,
+      });
+      debugger;
+      const wallet = await selector.wallet();
 
-    // const txs = actions[0].view;
-    // setLoading(true);
-    // setGlobalLoader(true);
-    if (actions) {
-      for (const route of actions) {
-        console.log('dex', route.dex, 'output', route.output.toString());
-        const txs = await arbitoor.generateTransactions({
-          routeInfo: route,
-          slippageTolerance: slippageValue,
-        });
-        const wallet = await selector.wallet();
-
-        await wallet.signAndSendTransactions({
-          transactions: txs,
-        });
-      }
-      // try {
-      //   // const txs = await arbitoor.generateTransactions({
-      //   //   tokenIn: payToken?.address,
-      //   //   tokenOut: receiveToken?.address,
-      //   //   exchange: actions[0]?.dex,
-      //   //   swapsToDo: actions[0]?.view,
-      //   //   amountIn: inputAmountAdjusted,
-      //   //   slippageTolerance: slippageValue,
-      //   // });
-      //   // const txs = await arbitoor.generateTransactions({
-      //   //   routeInfo: actions as PathInfo,
-      //   //   slippageTolerance: slippageValue,
-      //   // });
-      //   console.log({ txs });
-
-      //   // setTransactionPayload(txs);
-      //   const wallet = await selector.wallet();
-
-      //   if (actions) {
-      //     await wallet.signAndSendTransactions({
-      //       transactions: txs,
-      //       // transactions: transactionPayload,
-      //     });
-      //     setLoading(false);
-      //     setGlobalLoader(false);
-      //   }
-      // } catch (error) {
-      //   console.error(error);
-      //   setLoading(false);
-      //   setGlobalLoader(false);
-      // }
+      await wallet.signAndSendTransactions({
+        transactions: txs,
+      });
     }
   }
+
   if (globalLoader) {
     return (
       <Flex justifyContent="center">
@@ -469,7 +306,6 @@ function SwapContent() {
     <>
       <Flex
         direction="column"
-        // bgColor="whitesmoke"
         bgColor="#26262C"
         borderRadius="14px"
         padding="22px 22px 32px"
@@ -504,7 +340,6 @@ function SwapContent() {
         <Box
           paddingX="14px"
           backgroundColor="#101010"
-          // backgroundColor="white"
           height="64px"
           borderRadius="14px"
         >
@@ -527,19 +362,6 @@ function SwapContent() {
               width={['50%', '50%', '75%', '75%']}
             />
           </Flex>
-          {/* {authKey?.accountId && inputError ? (
-            <chakra.span
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                color: 'red',
-                paddingBottom: '8px',
-              }}
-            >
-              {inputError}
-            </chakra.span>
-          ) : null} */}
         </Box>
 
         <ToggleToken handleTokenSwitch={tokenSwitchHandler} />
