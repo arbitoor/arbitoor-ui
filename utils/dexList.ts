@@ -7,6 +7,11 @@ export interface DexList {
     icon: string;
     name: string
   }
+  ,
+  'spot.spin-fi.near': {
+    icon: string;
+    name: string
+  }
 }
 
 export const dexList = {
@@ -17,5 +22,9 @@ export const dexList = {
   'v1.jumbo_exchange.near': {
     icon: "/assets/dexLogos/jumbo.svg",
     name: 'Jumbo',
+  },
+  'spot.spin-fi.near': {
+    icon: "/assets/dexLogos/spin.ico",
+    name: 'Spin',
   }
 }
