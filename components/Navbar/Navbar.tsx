@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { Flex, Box, Button } from '@chakra-ui/react';
 import NavLinks from '../NavLinks';
