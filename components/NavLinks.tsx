@@ -1,9 +1,10 @@
 import React from 'react';
 import NextLink from 'next/link';
-import { Flex, Text, LinkProps, Link } from '@chakra-ui/react';
+import { Flex, LinkProps, Link } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import { links } from '../utils/navLinks';
+import { links, socials } from '../utils/navLinks';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import SocialsDrawer from './SocialsDrawer/SocialsDrawer';
 
 interface Props {
   styleClass?: string;
@@ -18,7 +19,7 @@ export default function NavLinks({ styleClass }: Props) {
   const { asPath } = useRouter();
   return (
     <Flex
-      flex="0.5"
+      flex={['0.5', '0.5', '0.5', '0.6', '0.5']}
       justifyContent="space-around"
       className={`page-links ${styleClass ? styleClass : ''}`}
       display={['none', 'none', 'none', 'flex']}
@@ -48,6 +49,7 @@ export default function NavLinks({ styleClass }: Props) {
           </NextLink>
         </Flex>
       ))}
+      <SocialsDrawer />
     </Flex>
   );
 }
