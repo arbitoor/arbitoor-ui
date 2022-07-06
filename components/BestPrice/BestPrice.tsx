@@ -75,23 +75,27 @@ function BestPrice({ routes }: { routes: [RouteInfo, RouteInfo] }) {
                 >
                   {route.output !== '0' && route.path?.length ? (
                     <Flex
-                      fontSize="13px"
+                      fontSize="14px"
                       padding="16px"
                       justifyContent="space-between"
                       alignItems="center"
                       borderRadius="8px"
                     >
                       <Flex direction="column" alignItems="center">
-                        <Flex alignItems="center" fontWeight="semibold">
+                        <Flex
+                          alignItems="center"
+                          fontWeight="semibold"
+                          width="100%"
+                        >
                           <Image
                             alt="exchange logo"
                             src={dexList[route?.dex as keyof DexList]?.icon}
-                            width={22}
+                            width={21}
                             height={6}
                             borderRadius="12px"
                           />
 
-                          <chakra.span marginLeft="4px">
+                          <chakra.span marginLeft="6px">
                             {dexList[route?.dex as keyof DexList]?.name}
                           </chakra.span>
                         </Flex>
