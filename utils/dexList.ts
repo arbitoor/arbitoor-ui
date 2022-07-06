@@ -24,7 +24,7 @@ export const dexList = {
     name: 'Jumbo',
   },
   'spot.spin-fi.near': {
-    icon: "/assets/dexLogos/spin.ico",
+    icon: "/assets/dexLogos/spin.png",
     name: 'Spin',
   }
 }
