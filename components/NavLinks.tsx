@@ -1,9 +1,10 @@
 import React from 'react';
 import NextLink from 'next/link';
-import { Flex, Text, LinkProps, Link } from '@chakra-ui/react';
+import { Flex, Text, LinkProps, Link, Image } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { links } from '../utils/navLinks';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBullhorn, faCaretDown } from '@fortawesome/free-solid-svg-icons';
 
 interface Props {
   styleClass?: string;
@@ -18,7 +19,7 @@ export default function NavLinks({ styleClass }: Props) {
   const { asPath } = useRouter();
   return (
     <Flex
-      flex="0.5"
+      flex={['0.5', '0.5', '0.5', '0.6', '0.5']}
       justifyContent="space-around"
       className={`page-links ${styleClass ? styleClass : ''}`}
       display={['none', 'none', 'none', 'flex']}
@@ -48,6 +49,25 @@ export default function NavLinks({ styleClass }: Props) {
           </NextLink>
         </Flex>
       ))}
+      <Flex
+        alignItems="center"
+        cursor="pointer"
+        color="whitesmoke"
+        opacity="0.75"
+        _hover={{ color: '#de8f17', opacity: '1' }}
+      >
+        <FontAwesomeIcon icon={faBullhorn} height="18px" width="18px" />
+
+        <Link
+          fontSize="md"
+          ml="6px"
+          _hover={{ textDecoration: 'none' }}
+          _focus={{ border: 'none' }}
+        >
+          Socials
+        </Link>
+        <FontAwesomeIcon icon={faCaretDown} height="18px" width="18px" />
+      </Flex>
     </Flex>
   );
 }

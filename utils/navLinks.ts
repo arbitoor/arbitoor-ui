@@ -1,4 +1,4 @@
-import { faChartLine, faFile, faShuffle } from '@fortawesome/free-solid-svg-icons';
+import { faChartLine, faFile, faShuffle, faBullhorn } from '@fortawesome/free-solid-svg-icons';
 
 export const links = [
   {
@@ -24,4 +24,12 @@ export const links = [
     external: false
 
   },
+  // {
+  //   id: 5,
+  //   text: 'Socials',
+  //   url: '',
+  //   icon: faBullhorn,
+  //   external: false
+
+  // }
 ];

@@ -24,13 +24,13 @@ function Sidebar({ isOpen, toggleSidebar }: any) {
     >
       <DrawerOverlay />
       <DrawerContent bg="#26262C" color="whitesmoke">
-        <DrawerCloseButton />
+        <DrawerCloseButton _focus={{ border: 'none ' }} />
         <DrawerHeader borderBottomWidth="1px" paddingBottom="0">
           <Image
             src="/monogram.svg"
             alt="brand monogram"
             height={50}
-            width={75}
+            width={70}
           />
           <Image
             src="/assets/logo.svg"

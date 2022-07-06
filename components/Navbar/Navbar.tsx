@@ -31,7 +31,8 @@ function Navbar() {
       fontWeight="600"
     >
       <Flex
-        flex={['0.5', '0.5', '0.5', '1 1 0%']}
+        flex={['0.5', '0.5', '1 1 15%', '1 1 0%']}
+        justifyContent="space-between"
         display={['block', 'block', 'block', 'flex']}
       >
         <Flex flex="0.25">
@@ -50,7 +51,8 @@ function Navbar() {
         <NavLinks />
       </Flex>
       <Flex
-        flex="1 1 0%"
+        // flex="1 1 0%"
+        flex={['0.5', '0.5', '0.5', '0.4', '0.5']}
         justifyContent="flex-end"
         display={['none', 'none', 'none', 'flex']}
       >
