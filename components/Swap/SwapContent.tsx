@@ -393,10 +393,11 @@ function SwapContent() {
         isSignedIn={authKey?.accountId}
         swapHandler={authKey?.accountId ? handleSwap : handleSignIn}
         disabled={
-          (authKey?.accountId && !paths?.length) ||
-          (authKey?.accountId && +inputAmount <= 0) ||
-          (authKey?.accountId && inputError.length) ||
-          loading
+          authKey?.accountId &&
+          (!paths[0]?.path?.length ||
+            +inputAmount <= 0 ||
+            inputError.length ||
+            loading)
         }
       />
     </>
