@@ -105,7 +105,7 @@ function SwapContent() {
   });
 
   useEffect(() => {
-    if (inputAmount !== '') {
+    if (+inputAmount > 0) {
       memoizedFetcher(inputAmount);
     }
   }, [payToken, receiveToken, inputAmount]);
@@ -234,7 +234,7 @@ function SwapContent() {
 
   function handleInputChange(evt: any) {
     const { value } = evt.target;
-    if (value <= 0) {
+    if (value < 0) {
       return;
     }
     setInputAmount(value);
@@ -372,15 +372,8 @@ function SwapContent() {
           />
 
           <TokenList selectToken={selectReceiveToken} token={receiveToken} />
-          {loading || !paths?.length || !inputAmount ? (
-            <LoadingBestPrice
-              text={
-                inputAmount
-                  ? 'Please wait while we fetch the best price...'
-                  : ''
-              }
-              display={!inputAmount.length ? 'none' : 'flex'}
-            />
+          {loading || !paths?.length || +inputAmount <= 0 ? (
+            <LoadingBestPrice display={+inputAmount <= 0 ? 'none' : 'flex'} />
           ) : (
             paths.length && (
               <BestPrice routes={paths as [RouteInfo, RouteInfo]} />
@@ -401,7 +394,7 @@ function SwapContent() {
         swapHandler={authKey?.accountId ? handleSwap : handleSignIn}
         disabled={
           (authKey?.accountId && !paths?.length) ||
-          (authKey?.accountId && !inputAmount) ||
+          (authKey?.accountId && +inputAmount <= 0) ||
           (authKey?.accountId && inputError.length)
         }
       />
