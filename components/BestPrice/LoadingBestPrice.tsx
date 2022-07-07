@@ -25,6 +25,7 @@ function LoadingBestPrice({ display }: Props) {
         marginTop="12px"
         p="12px"
         display={display}
+        opacity="0.2"
       />
       <Box marginBottom="12px"></Box>
       <Skeleton
@@ -36,6 +37,7 @@ function LoadingBestPrice({ display }: Props) {
         marginTop="12px"
         p="12px"
         display={display}
+        opacity="0.2"
       />
     </Stack>
   );
