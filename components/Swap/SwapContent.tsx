@@ -280,7 +280,7 @@ function SwapContent() {
         routeInfo: actions[0],
         slippageTolerance: slippageValue,
       });
-      debugger;
+
       const wallet = await selector.wallet();
 
       await wallet.signAndSendTransactions({
@@ -395,7 +395,8 @@ function SwapContent() {
         disabled={
           (authKey?.accountId && !paths?.length) ||
           (authKey?.accountId && +inputAmount <= 0) ||
-          (authKey?.accountId && inputError.length)
+          (authKey?.accountId && inputError.length) ||
+          loading
         }
       />
     </>
