@@ -1,25 +1,43 @@
-import { Flex } from '@chakra-ui/react';
+import {
+  Skeleton,
+  SkeletonCircle,
+  SkeletonText,
+  Flex,
+  Stack,
+  Box,
+} from '@chakra-ui/react';
 import React from 'react';
 
 interface Props {
-  text: string;
+  text?: string;
   display: string;
 }
 
-function LoadingBestPrice({ text, display }: Props) {
+function LoadingBestPrice({ display }: Props) {
   return (
-    <Flex
-      background="#494954"
-      borderRadius="8px"
-      height="140px"
-      justifyContent="center"
-      alignItems="center"
-      marginTop="12px"
-      p="12px"
-      display={display}
-    >
-      {text}
-    </Flex>
+    <Stack>
+      <Skeleton
+        background="#494954"
+        borderRadius="8px"
+        height="60px"
+        justifyContent="center"
+        alignItems="center"
+        marginTop="12px"
+        p="12px"
+        display={display}
+      />
+      <Box marginBottom="12px"></Box>
+      <Skeleton
+        background="#494954"
+        borderRadius="8px"
+        height="60px"
+        justifyContent="center"
+        alignItems="center"
+        marginTop="12px"
+        p="12px"
+        display={display}
+      />
+    </Stack>
   );
 }
 
