@@ -45,7 +45,7 @@ export const socials = [
   {
     id: 3,
     text: 'Medium',
-    url: 'https://arbitoor.medium.com/',
+    url: 'https://medium.com/@Arbitoor',
     icon: '/assets/social/medium.svg',
     external: true
   },
