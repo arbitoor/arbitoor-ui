@@ -23,6 +23,7 @@ function SwapSide({
       paddingBottom="14px"
       marginTop="12px"
       color="whitesmoke"
+      wrap="wrap"
     >
       <Text fontWeight="600" fontSize="0.875rem" lineHeight="1.25rem">
         <chakra.span>You {swapSide}</chakra.span>

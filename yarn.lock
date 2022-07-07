@@ -2,12 +2,10 @@
 # yarn lockfile v1
 
 
-"@arbitoor/arbitoor-core@^1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@arbitoor/arbitoor-core/-/arbitoor-core-1.2.2.tgz#16eefcd8da378daac1053623bd933c5da05f5d99"
-  integrity sha512-k3ba3eTBrWlQ08eRgpeFq8KDpWxM9kgdz4K8EnYtncCLo19QMgx+q172w39nqWqWWTjHz7VWlXRwKuPdFmeOxg==
-  dependencies:
-    "@spinfi/core" "^1.0.1"
+"@arbitoor/arbitoor-core@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@arbitoor/arbitoor-core/-/arbitoor-core-1.2.3.tgz#fafd8fbff3e7db4d2a37ddd3ce4ddf08e279ac6f"
+  integrity sha512-YpFYHe2j6iaj2Y1XFOmBUZDJGGg23JEQpoVdfbZ1o+5eFy8vhd7qyWQbkWB9lI0WDAkzCGtB1oczQVr/yAPx4Q==
 
 "@babel/code-frame@^7.0.0":
   version "7.16.7"
@@ -1058,49 +1056,6 @@
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.1.3.tgz#6801033be7ff87a6b7cadaf5b337c9f366a3c4b0"
   integrity sha512-WiBSI6JBIhC6LRIsB2Kwh8DsGTlbBU+mLRxJmAe3LjHTdkDpwIbEOZgoXBbZilk/vlfjK8i6nKRAvIRn1XaIMw==
 
-"@spinfi/core@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@spinfi/core/-/core-1.0.1.tgz#f06737b5e6b3b8b3dc1d6f93be63f8fcd79f7cb7"
-  integrity sha512-O58PY0XgID7xK3Qr0FBDaHKD+kQx39EhKtliLSAMQrgyxZuwF6DVEbcM8RQScY97zAyHuvcV3KrG6gJdQQ9IQQ==
-  dependencies:
-    "@spinfi/number" "^0.1.8"
-    "@spinfi/shared" "^0.2.1"
-    "@spinfi/websocket" "0.1.6"
-    nanoid "3.3.2"
-    near-api-js "0.44.2"
-    near-transaction-manager "0.1.1"
-    rxjs "7.5.5"
-
-"@spinfi/number@^0.1.8":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@spinfi/number/-/number-0.1.8.tgz#256d3aa5d4301a9e315d5ad5ca154fdf2a972baf"
-  integrity sha512-qYKAPs0lkWVazOzztCt/L+D3f76ESUgYLVlBibhOZ4l6PFiBUU4sZd85JoCBFc3u5BKk9nXQg3wb9lc3pv7xkg==
-  dependencies:
-    "@spinfi/shared" "^0.2.1"
-
-"@spinfi/shared@0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@spinfi/shared/-/shared-0.1.4.tgz#fc715b8f54970c645d8d2eee0225b91d7145ef3f"
-  integrity sha512-ForYp/BjSh28Hcu4L2/aiKWv6wxhFek4qeMfCDWhuekGVTxW/yeQBZKXcXSEkj9+VEmbt4vxvrvR1iSfpAYBOg==
-
-"@spinfi/shared@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@spinfi/shared/-/shared-0.2.1.tgz#06e3ec68bd58c5368daf385c4e55cd47939d4e1b"
-  integrity sha512-bvMmSppvceyd8n6As/4IPlv4k8RRh1in7LKrbL3NC+a2vnv6Lkai7VeaV+sLpmxsm/5hY4+SdgZHdMBCWL2RDw==
-  dependencies:
-    near-api-js "0.44.2"
-
-"@spinfi/websocket@0.1.6":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@spinfi/websocket/-/websocket-0.1.6.tgz#e5d3696cf1f0d6ddd18dae1cea85995037e9d752"
-  integrity sha512-MBxHq5AE1IS8u76sSBrfKSWdWfBanp79X1OnpcKTQKeBf93vr1ygFU2w99Uft+Rg9TtPhblFPiobm9gRVhbO6w==
-  dependencies:
-    "@spinfi/shared" "0.1.4"
-    isomorphic-ws "4.0.1"
-    nanoid "3.3.3"
-    rxjs "7.5.5"
-    ws "8.5.0"
-
 "@stablelib/aead@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@stablelib/aead/-/aead-1.0.1.tgz#c4b1106df9c23d1b867eb9b276d8f42d5fc4c0c3"
@@ -1735,7 +1690,7 @@ braces@^3.0.2:
   dependencies:
     fill-range "^7.0.1"
 
-bs58@^4.0.0, bs58@^4.0.1:
+bs58@^4.0.0:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/bs58/-/bs58-4.0.1.tgz#be161e76c354f6f788ae4071f63f34e8c4f0a42a"
   integrity sha512-Ok3Wdf5vOIlBrgCvTq96gBkJw+JUEzdBgyaza5HLtPm7yTHkjRy8+JzNyHF7BHa0bNWOQIp3m5YF0nnFcOIKLw==
@@ -2812,11 +2767,6 @@ isexe@^2.0.0:
   resolved "https://registry.yarnpkg.com/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
   integrity sha1-6PvzdNxVb/iUehDcsFctYz8s+hA=
 
-isomorphic-ws@4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/isomorphic-ws/-/isomorphic-ws-4.0.1.tgz#55fd4cd6c5e6491e76dc125938dd863f5cd4f2dc"
-  integrity sha512-BhBvN2MBpWTaSHdWRb/bwdZJ1WaehQ2L1KngkCkfLUGF0mAWAT1sQUQacEmQ0jXkFw/czDXPNQSL5u2/Krsz1w==
-
 javascript-natural-sort@^0.7.1:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/javascript-natural-sort/-/javascript-natural-sort-0.7.1.tgz#f9e2303d4507f6d74355a73664d1440fb5a0ef59"
@@ -3038,16 +2988,6 @@ mustache@^4.0.0:
   resolved "https://registry.yarnpkg.com/mustache/-/mustache-4.2.0.tgz#e5892324d60a12ec9c2a73359edca52972bf6f64"
   integrity sha512-71ippSywq5Yb7/tVYyGbkBggbU8H3u5Rz56fH60jGFgr8uHwxs+aSKeqmluIVzM0m0kB7xQjKS6qPfd0b2ZoqQ==
 
-nanoid@3.3.2:
-  version "3.3.2"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.2.tgz#c89622fafb4381cd221421c69ec58547a1eec557"
-  integrity sha512-CuHBogktKwpm5g2sRgv83jEy2ijFzBwMoYA60orPDR7ynsLijJDqgsi4RDGj3OJpy3Ieb+LYwiRmIOGyytgITA==
-
-nanoid@3.3.3:
-  version "3.3.3"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.3.tgz#fd8e8b7aa761fe807dba2d1b98fb7241bb724a25"
-  integrity sha512-p1sjXuopFs0xg+fPASzQ28agW1oHD7xDsd9Xkf3T15H3c/cifrFHVwrh74PdoklAPi+i7MdRsE47vm2r6JoB+w==
-
 nanoid@^3.1.30:
   version "3.3.4"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.4.tgz#730b67e3cd09e2deacf03c027c81c9d9dbc5e8ab"
@@ -3074,13 +3014,6 @@ near-api-js@0.44.2, near-api-js@^0.44.2:
     node-fetch "^2.6.1"
     text-encoding-utf-8 "^1.0.2"
     tweetnacl "^1.0.1"
-
-near-transaction-manager@0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/near-transaction-manager/-/near-transaction-manager-0.1.1.tgz#d285745602a1b08c6f639831a406f532dcc50ab2"
-  integrity sha512-kG98kg/5RNt4c4x4QPd/gAkSLiTkRQQPYtRm/NNH1tE/SmNlxdgALj1XxuKHkz3O067kCVi+6WI1aakcHKdXfw==
-  dependencies:
-    bs58 "^4.0.1"
 
 next@12.1.6:
   version "12.1.6"
@@ -3600,13 +3533,6 @@ rxjs@6:
   dependencies:
     tslib "^1.9.0"
 
-rxjs@7.5.5:
-  version "7.5.5"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.5.5.tgz#2ebad89af0f560f460ad5cc4213219e1f7dd4e9f"
-  integrity sha512-sy+H0pQofO95VDmFLzyaw9xNJU4KTRSwQIGM6+iG3SypAtCiLDzpeG8sJrNCWn2Up9km+KhkvTdbkrdy+yzZdw==
-  dependencies:
-    tslib "^2.1.0"
-
 rxjs@~7.4.0:
   version "7.4.0"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.4.0.tgz#a12a44d7eebf016f5ff2441b87f28c9a51cebc68"
@@ -4070,11 +3996,6 @@ wrappy@1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
   integrity sha1-tSQ9jz7BqjXxNkYFvA0QNuMKtp8=
-
-ws@8.5.0:
-  version "8.5.0"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-8.5.0.tgz#bfb4be96600757fe5382de12c670dab984a1ed4f"
-  integrity sha512-BWX0SWVgLPzYwF8lTzEy1egjhS4S4OEAHfsO8o65WOVsrnSRGaSiUaa9e0ggGlkMTtBlmOpEXiie9RUcBO86qg==
 
 ws@^7.5.1:
   version "7.5.8"
