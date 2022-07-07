@@ -9,7 +9,6 @@ import { useGlobalStore } from '../../utils/globalStore';
 
 function SwapBody() {
   const inputAmount = useGlobalStore((state) => state.inputAmount);
-  const paths = useGlobalStore((state) => state.paths);
   const [tokenListDB, setTokenListDB] = useGlobalStore((state) => [
     state.tokenListDB,
     state.setTokenListDB,
@@ -82,7 +81,7 @@ function SwapBody() {
         )}
         <div style={{ marginBottom: '32px' }} />
       </chakra.form>
-      {(inputAmount  && paths[0]?.path?.length) ? (
+      {inputAmount ? (
         <Button
           color="whitesmoke"
           _focus={{ border: 'none' }}
