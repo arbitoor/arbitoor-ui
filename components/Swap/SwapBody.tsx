@@ -82,7 +82,7 @@ function SwapBody() {
         )}
         <div style={{ marginBottom: '32px' }} />
       </chakra.form>
-      {inputAmount && paths[0]?.path?.length ? (
+      {+inputAmount > 0 && paths[0]?.path?.length ? (
         <Button
           color="whitesmoke"
           _focus={{ border: 'none' }}

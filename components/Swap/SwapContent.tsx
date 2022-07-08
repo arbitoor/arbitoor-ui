@@ -12,6 +12,7 @@ import {
   Arbitoor,
   getRoutePath,
   RouteInfo as PathInfo,
+  toPrecision,
 } from '@arbitoor/arbitoor-core';
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
@@ -93,11 +94,6 @@ function SwapContent() {
     url: network.nodeUrl,
   });
 
-  const tokenMap = tokenListDB.reduce((map, item) => {
-    map.set(item.address, item);
-    return map;
-  }, new Map<string, TokenMetadata>());
-
   const arbitoor = new Arbitoor({
     accountProvider: memoizedInMemoryProvider,
     user: localStorage.getItem('accountId')!,
@@ -130,6 +126,7 @@ function SwapContent() {
   }, [payToken, receiveToken, authKey]);
 
   async function getTokenBalance() {
+    //TODO: to make a generic function to fetch balances
     try {
       const getPaytokenBalance = await provider.query<CodeResult>({
         request_type: 'call_function',
@@ -143,11 +140,15 @@ function SwapContent() {
       const userPayTokenBalance = JSON.parse(
         Buffer.from(getPaytokenBalance.result).toString()
       );
+      
+
       if (payToken) {
         const resultPay = (
           userPayTokenBalance * Math.pow(10, -payToken?.decimals)
-        ).toFixed(4);
-        setUserPayTokenBalance(resultPay);
+        ).toString();
+
+        
+        setUserPayTokenBalance(toPrecision(resultPay, 4));
       }
 
       const getReceivetokenBalance = await provider.query<CodeResult>({
@@ -165,8 +166,8 @@ function SwapContent() {
       if (receiveToken) {
         const resultReceive = (
           userReceiveTokenBalance * Math.pow(10, -receiveToken?.decimals)
-        ).toFixed(4);
-        setUserReceiveTokenBalance(resultReceive);
+        ).toString();
+        setUserReceiveTokenBalance(toPrecision(resultReceive, 4));
       }
     } catch (error) {
       console.log(error);
@@ -201,7 +202,7 @@ function SwapContent() {
           const generatePath = getRoutePath(action);
           const path = normalizeRoutesPath(generatePath, tokenListDB);
 
-          const output = action?.output.toFixed(3);
+          const output = toPrecision(action?.output.toString(), 4);
           const dex = action?.dex;
           const routePercentage = generatePath.map((data) => data?.percentage);
 
