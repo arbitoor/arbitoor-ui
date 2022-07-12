@@ -94,7 +94,10 @@ function SwapContent() {
 
   const storageAccount = localStorage.getItem('accountId');
 
-  const { selector, modal, authKey, accountId } = useWalletSelector();
+  const { selector, modal, authKey, accountId, walletType } =
+    useWalletSelector();
+  const senderInstalled =
+    typeof window.near !== 'undefined' && window.near.isSender;
   const { memoizedInMemoryProvider, isLoading } = useInMemoryProvider();
 
   const isSignedIn = selector.isSignedIn();

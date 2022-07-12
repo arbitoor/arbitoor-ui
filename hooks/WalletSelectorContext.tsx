@@ -5,6 +5,7 @@ import { setupModal } from '@near-wallet-selector/modal-ui';
 import { setupNearWallet } from '@near-wallet-selector/near-wallet';
 import { setupSender } from '@near-wallet-selector/sender';
 import { setupMathWallet } from '@near-wallet-selector/math-wallet';
+import { setupNightly } from '@near-wallet-selector/nightly';
 import { setupLedger } from '@near-wallet-selector/ledger';
 import { setupMyNearWallet } from '@near-wallet-selector/my-near-wallet';
 import type { WalletSelector, AccountState } from '@near-wallet-selector/core';
@@ -27,6 +28,7 @@ interface WalletSelectorContextValue {
   modal: WalletSelectorModal;
   accounts: Array<AccountState>;
   accountId: string | null;
+  walletType: string | undefined;
   setAccountId: (accountId: string) => void;
   authKey: any;
   setAuthKey: any;
@@ -38,6 +40,7 @@ const WalletSelectorContext =
 export const WalletSelectorContextProvider = ({ children }: any) => {
   const [selector, setSelector] = useState<WalletSelector | null>(null);
   const [modal, setModal] = useState<WalletSelectorModal | null>(null);
+  const [walletType, setWalletType] = useState<string | undefined>(undefined);
   const [accountId, setAccountId] = useState<string | null>(null);
   const [accounts, setAccounts] = useState<Array<AccountState>>([]);
   const [authKey, setAuthKey] = useState<any>();
@@ -83,6 +86,9 @@ export const WalletSelectorContextProvider = ({ children }: any) => {
         setupMathWallet({
           iconUrl: '/assets/walletSelector/math-wallet-icon.png',
         }),
+        setupNightly({
+          iconUrl: '/assets/walletSelector/nightly.png',
+        }),
         setupLedger({
           iconUrl: '/assets/walletSelector/ledger-icon.png',
         }),
@@ -98,6 +104,10 @@ export const WalletSelectorContextProvider = ({ children }: any) => {
     window.modal = _modal;
     //@ts-ignore
     setAuthKey(JSON.parse(localStorage.getItem('near_app_wallet_auth_key')));
+    setWalletType(
+      //@ts-ignore
+      JSON.parse(localStorage.getItem('near-wallet-selector:selectedWalletId'))
+    );
 
     setSelector(_selector);
     setModal(_modal);
@@ -109,6 +119,8 @@ export const WalletSelectorContextProvider = ({ children }: any) => {
       alert('Failed to initialise wallet selector');
     });
   }, [init]);
+
+  console.log('type', walletType);
 
   useEffect(() => {
     if (!selector) {
@@ -139,6 +151,7 @@ export const WalletSelectorContextProvider = ({ children }: any) => {
         authKey,
         accounts,
         accountId,
+        walletType,
         setAccountId,
         setAuthKey,
       }}
