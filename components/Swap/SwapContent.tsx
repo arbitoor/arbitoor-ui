@@ -86,9 +86,13 @@ function SwapContent() {
 
   const storageAccount = localStorage.getItem('accountId');
 
-  const { selector, modal, authKey, accountId } = useWalletSelector();
+  const { selector, modal, authKey, accountId, walletType } =
+    useWalletSelector();
+  const senderInstalled =
+    typeof window.near !== 'undefined' && window.near.isSender;
   const { memoizedInMemoryProvider, isLoading } = useInMemoryProvider();
 
+  const isSignedIn = selector.isSignedIn();
   const { network } = selector.options;
   const provider = new providers.JsonRpcProvider({
     url: network.nodeUrl,
@@ -97,7 +101,6 @@ function SwapContent() {
   const arbitoor = new Arbitoor({
     accountProvider: memoizedInMemoryProvider,
     user: localStorage.getItem('accountId')!,
-    routeCacheDuration: 1000,
   });
 
   useEffect(() => {
@@ -117,13 +120,13 @@ function SwapContent() {
   const fetcherWithDebounce = _.debounce(findRoutes, 1000);
 
   useEffect(() => {
-    if (authKey?.accountId) {
+    if (authKey?.accountId || accountId) {
       getTokenBalance();
     }
 
     setUserPayTokenBalance('0.0000');
     setUserReceiveTokenBalance('0.0000');
-  }, [payToken, receiveToken, authKey]);
+  }, [payToken, receiveToken, authKey, accountId]);
 
   async function getTokenBalance() {
     //TODO: to make a generic function to fetch balances
@@ -133,21 +136,19 @@ function SwapContent() {
         account_id: payToken?.address,
         method_name: 'ft_balance_of',
         args_base64: Buffer.from(
-          JSON.stringify({ account_id: authKey?.accountId })
+          JSON.stringify({ account_id: authKey?.accountId || accountId })
         ).toString('base64'),
         finality: 'optimistic',
       });
       const userPayTokenBalance = JSON.parse(
         Buffer.from(getPaytokenBalance.result).toString()
       );
-      
 
       if (payToken) {
         const resultPay = (
           userPayTokenBalance * Math.pow(10, -payToken?.decimals)
         ).toString();
 
-        
         setUserPayTokenBalance(toPrecision(resultPay, 4));
       }
 
@@ -156,7 +157,7 @@ function SwapContent() {
         account_id: receiveToken?.address,
         method_name: 'ft_balance_of',
         args_base64: Buffer.from(
-          JSON.stringify({ account_id: authKey?.accountId })
+          JSON.stringify({ account_id: authKey?.accountId || accountId })
         ).toString('base64'),
         finality: 'optimistic',
       });
@@ -264,15 +265,15 @@ function SwapContent() {
   async function handleSwap() {
     console.log('tokens', payToken, receiveToken);
 
-    if (receiveToken && storageAccount) {
+    if (receiveToken && (storageAccount || accountId)) {
       const storage = memoizedInMemoryProvider.ftGetStorageBalance(
         receiveToken.address,
-        storageAccount
+        storageAccount || accountId!
       );
       if (!storage) {
         await memoizedInMemoryProvider.ftFetchStorageBalance(
           receiveToken.address,
-          storageAccount
+          storageAccount || accountId!
         );
       }
     }
@@ -283,10 +284,17 @@ function SwapContent() {
       });
 
       const wallet = await selector.wallet();
-
       await wallet.signAndSendTransactions({
         transactions: txs,
       });
+
+      // if (typeof window.near !== 'undefined' && window.near.isSender) {
+      //   await window.near.requestSignTransactions({ transactions: txs } as any);
+      // } else {
+      //   await wallet.signAndSendTransactions({
+      //     transactions: txs,
+      //   });
+      // }
     }
   }
 
@@ -389,12 +397,18 @@ function SwapContent() {
         }}
       />
       <CustomButton
-        btnType={authKey?.accountId && inputError.length ? 'error' : 'swap'}
+        btnType={
+          (isSignedIn || authKey?.accountId) && inputError.length
+            ? 'error'
+            : 'swap'
+        }
         text="Connect Wallet"
-        isSignedIn={authKey?.accountId}
-        swapHandler={authKey?.accountId ? handleSwap : handleSignIn}
+        isSignedIn={authKey?.accountId || isSignedIn}
+        swapHandler={
+          authKey?.accountId || isSignedIn ? handleSwap : handleSignIn
+        }
         disabled={
-          authKey?.accountId &&
+          (isSignedIn || authKey?.accountId) &&
           (!paths[0]?.path?.length ||
             +inputAmount <= 0 ||
             inputError.length ||

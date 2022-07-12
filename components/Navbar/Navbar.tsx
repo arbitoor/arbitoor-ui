@@ -9,9 +9,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useWalletSelector } from '../../hooks/WalletSelectorContext';
 import AccountDetails from '../AccountDetails/AccountDetails';
 import Sidebar from '../Sidebar/Sidebar';
+import { CONTRACT_ID } from '../../utils/constants';
 
 function Navbar() {
-  const { modal, authKey } = useWalletSelector();
+  const { modal, authKey, selector } = useWalletSelector();
+
+  const isSignedIn = selector.isSignedIn();
 
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -56,7 +59,7 @@ function Navbar() {
         justifyContent="flex-end"
         display={['none', 'none', 'none', 'flex']}
       >
-        {authKey ? (
+        {authKey || isSignedIn ? (
           <AccountDetails />
         ) : (
           <CustomButton
