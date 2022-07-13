@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Flex, Box, Input, Text, Spinner } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import { providers } from 'near-api-js';
 import TokenList from '../TokenList/TokenList';
 import ToggleToken from '../ToggleToken/ToggleToken';
@@ -73,6 +74,11 @@ function SwapContent() {
     state.setPaths,
   ]);
 
+  const [txHash, setTxHash] = useGlobalStore((state) => [
+    state.txHash,
+    state.setTxHash,
+  ]);
+
   const slippageValue = useGlobalStore((state) => state.slippageValue);
 
   const [transactionPayload, setTransactionPayload] = useState<Transaction[]>(
@@ -89,6 +95,7 @@ function SwapContent() {
   const { selector, modal, authKey, accountId } = useWalletSelector();
   const { memoizedInMemoryProvider, isLoading } = useInMemoryProvider();
 
+  const isSignedIn = selector.isSignedIn();
   const { network } = selector.options;
   const provider = new providers.JsonRpcProvider({
     url: network.nodeUrl,
@@ -116,53 +123,35 @@ function SwapContent() {
   const fetcherWithDebounce = _.debounce(findRoutes, 1000);
 
   useEffect(() => {
-    if (authKey?.accountId) {
+    if (authKey?.accountId || accountId) {
       getTokenBalance();
     }
 
     setUserPayTokenBalance('0.0000');
     setUserReceiveTokenBalance('0.0000');
-  }, [payToken, receiveToken, authKey]);
+  }, [payToken, receiveToken, authKey, accountId, txHash]);
 
   async function getTokenBalance() {
     //TODO: to make a generic function to fetch balances
     try {
-      const getPaytokenBalance = await provider.query<CodeResult>({
-        request_type: 'call_function',
-        account_id: payToken?.address,
-        method_name: 'ft_balance_of',
-        args_base64: Buffer.from(
-          JSON.stringify({ account_id: authKey?.accountId })
-        ).toString('base64'),
-        finality: 'optimistic',
-      });
-      const userPayTokenBalance = JSON.parse(
-        Buffer.from(getPaytokenBalance.result).toString()
+      const getPaytokenBalance = await getBalance(
+        payToken?.address,
+        authKey?.accountId || accountId
       );
-
       if (payToken) {
         const resultPay = (
-          userPayTokenBalance * Math.pow(10, -payToken?.decimals)
+          getPaytokenBalance * Math.pow(10, -payToken?.decimals)
         ).toString();
-
         setUserPayTokenBalance(toPrecision(resultPay, 4));
       }
 
-      const getReceivetokenBalance = await provider.query<CodeResult>({
-        request_type: 'call_function',
-        account_id: receiveToken?.address,
-        method_name: 'ft_balance_of',
-        args_base64: Buffer.from(
-          JSON.stringify({ account_id: authKey?.accountId })
-        ).toString('base64'),
-        finality: 'optimistic',
-      });
-      const userReceiveTokenBalance = JSON.parse(
-        Buffer.from(getReceivetokenBalance.result).toString()
+      const getReceivetokenBalance = await getBalance(
+        receiveToken?.address,
+        authKey?.accountId || accountId
       );
       if (receiveToken) {
         const resultReceive = (
-          userReceiveTokenBalance * Math.pow(10, -receiveToken?.decimals)
+          getReceivetokenBalance * Math.pow(10, -receiveToken?.decimals)
         ).toString();
         setUserReceiveTokenBalance(toPrecision(resultReceive, 4));
       }
@@ -215,6 +204,27 @@ function SwapContent() {
     }
   }
 
+  async function getBalance(token_id: string, accountId: string) {
+    if (!token_id || !accountId) return;
+    try {
+      const getTokenBalance = await provider.query<CodeResult>({
+        request_type: 'call_function',
+        account_id: token_id,
+        method_name: 'ft_balance_of',
+        args_base64: Buffer.from(
+          JSON.stringify({ account_id: accountId })
+        ).toString('base64'),
+        finality: 'optimistic',
+      });
+      const userTokenBalance = JSON.parse(
+        Buffer.from(getTokenBalance.result).toString()
+      );
+      return userTokenBalance;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const handleSignIn = () => {
     modal.show();
   };
@@ -261,29 +271,40 @@ function SwapContent() {
   async function handleSwap() {
     console.log('tokens', payToken, receiveToken);
 
-    if (receiveToken && storageAccount) {
+    if (receiveToken && (storageAccount || accountId)) {
       const storage = memoizedInMemoryProvider.ftGetStorageBalance(
         receiveToken.address,
-        storageAccount
+        storageAccount || accountId!
       );
       if (!storage) {
         await memoizedInMemoryProvider.ftFetchStorageBalance(
           receiveToken.address,
-          storageAccount
+          storageAccount || accountId!
         );
       }
     }
-    if (actions && actions[0]) {
-      const txs = await arbitoor.generateTransactions({
-        routeInfo: actions[0],
-        slippageTolerance: slippageValue,
-      });
+    try {
+      setLoading(true);
 
-      const transactions = JSON.parse(JSON.stringify(txs));
-      const wallet = await selector.wallet();
-      const tx = await wallet.signAndSendTransactions({
-        transactions,
-      });
+      if (actions && actions[0]) {
+        const txs = await arbitoor.generateTransactions({
+          routeInfo: actions[0],
+          slippageTolerance: slippageValue,
+        });
+
+        const transactions = JSON.parse(JSON.stringify(txs));
+        const wallet = await selector.wallet();
+        const tx = await wallet.signAndSendTransactions({
+          transactions,
+        });
+        if (tx) {
+          setTxHash(tx[tx.length - 1]?.transaction_outcome?.id);
+        }
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
     }
   }
 
@@ -386,17 +407,24 @@ function SwapContent() {
         }}
       />
       <CustomButton
-        btnType={authKey?.accountId && inputError.length ? 'error' : 'swap'}
+        btnType={
+          (isSignedIn || authKey?.accountId) && inputError.length
+            ? 'error'
+            : 'swap'
+        }
         text="Connect Wallet"
-        isSignedIn={authKey?.accountId}
-        swapHandler={authKey?.accountId ? handleSwap : handleSignIn}
+        isSignedIn={authKey?.accountId || isSignedIn}
+        swapHandler={
+          authKey?.accountId || isSignedIn ? handleSwap : handleSignIn
+        }
         disabled={
-          authKey?.accountId &&
+          (authKey?.accountId || isSignedIn) &&
           (!paths[0]?.path?.length ||
             +inputAmount <= 0 ||
             inputError.length ||
             loading)
         }
+        isLoading={loading}
       />
     </>
   );
