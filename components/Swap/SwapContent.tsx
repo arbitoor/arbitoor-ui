@@ -283,16 +283,23 @@ function SwapContent() {
         slippageTolerance: slippageValue,
       });
 
-      const wallet = await selector.wallet();
-      await wallet.signAndSendTransactions({
-        transactions: txs,
-      });
+      const transactions = JSON.parse(JSON.stringify(txs));
 
+      const wallet = await selector.wallet();
+      const tx = await wallet.signAndSendTransactions({
+        transactions,
+      });
+      console.log('tx', tx);
       // if (typeof window.near !== 'undefined' && window.near.isSender) {
-      //   await window.near.requestSignTransactions({ transactions: txs } as any);
+      //   debugger;
+      //   const wallet = await selector.wallet('sender');
+      //   await wallet.signAndSendTransactions({
+      //     transactions,
+      //   });
+      //   // await window.near.requestSignTransactions({ transactions: txs } as any);
       // } else {
       //   await wallet.signAndSendTransactions({
-      //     transactions: txs,
+      //     transactions,
       //   });
       // }
     }
