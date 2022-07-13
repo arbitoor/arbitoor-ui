@@ -10,7 +10,7 @@ export function useInMemoryProvider() {
   const { network } = selector.options;
 
   const tokenListDB = useGlobalStore((state) => state.tokenListDB);
-  const [inputAmount] = useGlobalStore((state) => state.inputAmount);
+  
   const [spinData, setSpinData] = React.useState<any>();
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
@@ -23,23 +23,23 @@ export function useInMemoryProvider() {
     return map;
   }, new Map<string, TokenMetadata>());
 
-  async function fetchSpinData() {
-    const spinMarketData = await getSpinMarkets(provider);
-    const spinData = spinMarketData.filter(
-      (market: any) =>
-        market.base.symbol !== 'NEAR' && market.quote.symbol !== 'NEAR'
-    );
-    setSpinData(spinData);
-    setIsLoading(false);
-  }
+  // async function fetchSpinData() {
+  //   const spinMarketData = await getSpinMarkets(provider);
+  //   const spinData = spinMarketData.filter(
+  //     (market: any) =>
+  //       market.base.symbol !== 'NEAR' && market.quote.symbol !== 'NEAR'
+  //   );
+  //   setSpinData(spinData);
+  //   setIsLoading(false);
+  // }
 
-  useEffect(() => {
-    fetchSpinData();
-  }, []);
+  // useEffect(() => {
+  //   fetchSpinData();
+  // }, []);
 
   const memoizedInMemoryProvider = React.useMemo(() => {
-    return new InMemoryProvider(provider, tokenMap, spinData);
-  }, [spinData]);
+    return new InMemoryProvider(provider, tokenMap);
+  }, [tokenMap]);
 
   return { memoizedInMemoryProvider, isLoading };
 }
