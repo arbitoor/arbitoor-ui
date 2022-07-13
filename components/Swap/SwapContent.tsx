@@ -97,7 +97,6 @@ function SwapContent() {
   const arbitoor = new Arbitoor({
     accountProvider: memoizedInMemoryProvider,
     user: localStorage.getItem('accountId')!,
-    routeCacheDuration: 1000,
   });
 
   useEffect(() => {
@@ -140,14 +139,12 @@ function SwapContent() {
       const userPayTokenBalance = JSON.parse(
         Buffer.from(getPaytokenBalance.result).toString()
       );
-      
 
       if (payToken) {
         const resultPay = (
           userPayTokenBalance * Math.pow(10, -payToken?.decimals)
         ).toString();
 
-        
         setUserPayTokenBalance(toPrecision(resultPay, 4));
       }
 
@@ -282,10 +279,10 @@ function SwapContent() {
         slippageTolerance: slippageValue,
       });
 
+      const transactions = JSON.parse(JSON.stringify(txs));
       const wallet = await selector.wallet();
-
-      await wallet.signAndSendTransactions({
-        transactions: txs,
+      const tx = await wallet.signAndSendTransactions({
+        transactions,
       });
     }
   }
