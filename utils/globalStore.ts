@@ -7,10 +7,13 @@ interface GlobalStore {
   paths: RouteInfo[];
   tokenListDB: TokenMetadata[];
   slippageValue: number;
+  txHash: string;
   setInputAmount: (amount: string) => void;
   setPaths: (path: RouteInfo[]) => void;
   setTokenListDB: (list: TokenMetadata[]) => void;
   setSlippageValue: (value: number) => void;
+  setTxHash: (tx: string) => void;
+
 }
 
 export const useGlobalStore = create<GlobalStore>(((set, get) => ({
@@ -19,10 +22,12 @@ export const useGlobalStore = create<GlobalStore>(((set, get) => ({
   paths: [],
   tokenListDB: [],
   slippageValue: 0.5,
+  txHash: '',
   setInputAmount: (amount: string) => set({ inputAmount: amount }),
   setPaths: (path: RouteInfo[]) => set({ paths: path }),
   setTokenListDB: (list: TokenMetadata[]) => set({ tokenListDB: list }),
-  setSlippageValue: (value: number) => set({ slippageValue: value })
+  setSlippageValue: (value: number) => set({ slippageValue: value }),
+  setTxHash: (tx: string) => set({ txHash: tx })
 
 }
 )));

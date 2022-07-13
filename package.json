@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@arbitoor/arbitoor-core": "^1.2.3",
+    "@arbitoor/arbitoor-core": "^1.2.4",
     "@chakra-ui/react": "^2.0.0",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
