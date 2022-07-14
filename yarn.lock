@@ -1179,10 +1179,10 @@
   dependencies:
     near-api-js "^0.44.2"
 
-"@tonic-foundation/token-list@^0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@tonic-foundation/token-list/-/token-list-0.0.6.tgz#c58753e09300f26ad2e4ed9ce70203fecbf7f882"
-  integrity sha512-WM+rnxpMduqOu4Jn3cufj8XovqtofXgv4AQCsPv0+IZyNvjVM4TOAOBEyOENd78oMPsS3ac4Dmf7KVZ5A6knQA==
+"@tonic-foundation/token-list@^0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@tonic-foundation/token-list/-/token-list-0.0.7.tgz#f9dc6b89a240fb88e6038d756648f9f44a95c94e"
+  integrity sha512-+zjCYC1n3QXZtPbfe5VBUHkqFT69FV8mX8nx0CPqPTI+5qO6dPFE9Df4xLaDaymM8YdeSnWKSBx4H90ejRMrAw==
   dependencies:
     "@tonic-foundation/config" "^0.0.3"
     "@tonic-foundation/token" "^0.0.3"
