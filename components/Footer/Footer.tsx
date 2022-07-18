@@ -15,8 +15,12 @@ function Footer() {
       color="#bababa"
       backgroundColor="linear-gradient(155deg, #202020 20%, #000 180%);"
     >
-      <chakra.a href="/" target="_blank" rel="noopener noreferrer">
-        Arbitoor: The Key Liquidity Aggregator and Swap Infrastructure for Near
+      <chakra.a
+        href="https://docs.arbitoor.com"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Arbitoor: The premier DEX aggregator and Swap Infrastructure on Near
         Protocol
       </chakra.a>
     </Flex>
