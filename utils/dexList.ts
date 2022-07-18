@@ -26,5 +26,9 @@ export const dexList = {
   'spot.spin-fi.near': {
     icon: "/assets/dexLogos/spin.png",
     name: 'Spin',
+  },
+  'v1.orderbook.near': {
+    icon: "/assets/dexLogos/tonic.svg",
+    name: 'Tonic',
   }
 }
