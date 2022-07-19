@@ -1212,6 +1212,11 @@
     bn.js "^5.2.0"
     near-api-js "^0.44.2"
 
+"@types/big.js@^6.1.5":
+  version "6.1.5"
+  resolved "https://registry.yarnpkg.com/@types/big.js/-/big.js-6.1.5.tgz#ff06b43a4c0c4002522e0fd7fc28bb963722ab01"
+  integrity sha512-UiWyJ6TLWoHeHZ8VUyngzCOwJDVxTsPnqfAMR/85X93rkRk5A4T2U42BCx0wCmZdtMHGHN/utJ8ft5xWu0V1bA==
+
 "@types/json5@^0.0.29":
   version "0.0.29"
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
