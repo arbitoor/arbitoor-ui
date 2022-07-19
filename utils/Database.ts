@@ -16,6 +16,9 @@ export interface TokenMetadata {
   reference_hash: string | null;
   tags?: string[] | undefined;
   spec: string;
+  tokenTicker?: string | undefined;
+  tickerName?: string | undefined;
+  formattedTokenBalance?: string | undefined;
 }
 
 class IndexedDb extends Dexie {

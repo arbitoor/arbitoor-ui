@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@arbitoor/arbitoor-core@^1.2.4":
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/@arbitoor/arbitoor-core/-/arbitoor-core-1.2.4.tgz#1806e8b91781ee1e23a94fb15d590684832ac9c7"
-  integrity sha512-e20m+fYWuT8pgCBEjG7Iu4gne8q/NEuTKMNYphOMj/oAS4JXGZUA51M9IazQKV6utgZYQso0Xjfc9C3JS4P/iQ==
+"@arbitoor/arbitoor-core@^1.3.2":
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/@arbitoor/arbitoor-core/-/arbitoor-core-1.3.2.tgz#1efd7fbf7cb0023e359c69c39b4540282df4d2c8"
+  integrity sha512-/wpoQHWf0blzGhldkCg4N9OB/FlzUr1qv7ZNeHcYkxCVL6j0uwbb/HPIwSCRubfmlbwX5Uv9R5/BPZWByWiaQw==
 
 "@babel/code-frame@^7.0.0":
   version "7.16.7"
@@ -1211,6 +1211,11 @@
   dependencies:
     bn.js "^5.2.0"
     near-api-js "^0.44.2"
+
+"@types/big.js@^6.1.5":
+  version "6.1.5"
+  resolved "https://registry.yarnpkg.com/@types/big.js/-/big.js-6.1.5.tgz#ff06b43a4c0c4002522e0fd7fc28bb963722ab01"
+  integrity sha512-UiWyJ6TLWoHeHZ8VUyngzCOwJDVxTsPnqfAMR/85X93rkRk5A4T2U42BCx0wCmZdtMHGHN/utJ8ft5xWu0V1bA==
 
 "@types/json5@^0.0.29":
   version "0.0.29"
