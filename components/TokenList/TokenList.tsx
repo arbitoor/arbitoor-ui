@@ -49,55 +49,58 @@ function TokenList({ selectToken, token }: Props) {
   const [filteredList, setFilteredList] =
     React.useState<TokenMetadata[]>(tokenListDB);
 
-  async function getAllTokensBalance(tokenList: any) {
-    const filteredData = [];
+    //TO Show Token balance in the tokenlist modal
+  // async function getAllTokensBalance(tokenList: any) {
+  //   const filteredData = [];
 
-    for (const tokenData of tokenList) {
-      const rawTokenBalance = await getBalance(
-        tokenData?.address,
-        authKey?.accountId || accountId
-      );
-      const formattedTokenBalance = (
-        rawTokenBalance * Math.pow(10, -tokenData?.decimals)
-      ).toString();
-      const tokenTicker = tokenData?.symbol;
-      const tickerName = tokenData?.name;
+  //   for (const tokenData of tokenList) {
+  //     const rawTokenBalance = await getBalance(
+  //       tokenData?.address,
+  //       authKey?.accountId || accountId
+  //     );
+  //     const formattedTokenBalance = (
+  //       rawTokenBalance * Math.pow(10, -tokenData?.decimals)
+  //     ).toString();
+  //     const tokenTicker = tokenData?.symbol;
+  //     const tickerName = tokenData?.name;
+  //     const logoURI = tokenData?.logoURI;
 
-      filteredData.push({
-        tokenTicker,
-        tickerName,
-        formattedTokenBalance,
-      });
-    }
-    console.log({ filteredData });
-    return filteredData;
-  }
+  //     filteredData.push({
+  //       tokenTicker,
+  //       tickerName,
+  //       formattedTokenBalance,
+  //       logoURI,
+  //     });
+  //   }
+  //   console.log({ filteredData });
+  //   // setFilteredList(filteredData);
+  // }
 
-  useEffect(() => {
-    getAllTokensBalance(tokenListDB);
-  }, [tokenListDB]);
+  // useEffect(() => {
+  //   getAllTokensBalance(tokenListDB);
+  // }, [tokenListDB]);
 
-  //TODO:Refactor to make this a generic function
-  async function getBalance(token_id: string, accountId: string) {
-    if (!token_id || !accountId) return;
-    try {
-      const getTokenBalance = await provider.query<CodeResult>({
-        request_type: 'call_function',
-        account_id: token_id,
-        method_name: 'ft_balance_of',
-        args_base64: Buffer.from(
-          JSON.stringify({ account_id: accountId })
-        ).toString('base64'),
-        finality: 'optimistic',
-      });
-      const userTokenBalance = JSON.parse(
-        Buffer.from(getTokenBalance.result).toString()
-      );
-      return userTokenBalance;
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  // //TODO:Refactor to make this a generic function
+  // async function getBalance(token_id: string, accountId: string) {
+  //   if (!token_id || !accountId) return;
+  //   try {
+  //     const getTokenBalance = await provider.query<CodeResult>({
+  //       request_type: 'call_function',
+  //       account_id: token_id,
+  //       method_name: 'ft_balance_of',
+  //       args_base64: Buffer.from(
+  //         JSON.stringify({ account_id: accountId })
+  //       ).toString('base64'),
+  //       finality: 'optimistic',
+  //     });
+  //     const userTokenBalance = JSON.parse(
+  //       Buffer.from(getTokenBalance.result).toString()
+  //     );
+  //     return userTokenBalance;
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 
   const handleSearch = (e: any) => {
     const { value } = e.target;
