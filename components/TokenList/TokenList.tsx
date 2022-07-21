@@ -19,11 +19,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { TokenMetadata } from '../../utils/Database';
 import { providers } from 'near-api-js';
-import type { CodeResult } from 'near-api-js/lib/providers/provider';
 
 import { useGlobalStore } from '../../utils/globalStore';
 import { useWalletSelector } from '../../hooks/WalletSelectorContext';
-import { ftBalanceOf } from '../../utils/helpers';
+import { ftBalanceOf, getBalance } from '../../utils/helpers';
 import { useInMemoryProvider } from '../../hooks/useInMemoryProvider';
 // import { tokenList } from '../../utils/tokenList';
 // import { Token } from '../../types';
@@ -49,14 +48,15 @@ function TokenList({ selectToken, token }: Props) {
   const [filteredList, setFilteredList] =
     React.useState<TokenMetadata[]>(tokenListDB);
 
-    //TO Show Token balance in the tokenlist modal
+  //TO Show Token balance in the tokenlist modal
   // async function getAllTokensBalance(tokenList: any) {
   //   const filteredData = [];
 
   //   for (const tokenData of tokenList) {
   //     const rawTokenBalance = await getBalance(
   //       tokenData?.address,
-  //       authKey?.accountId || accountId
+  //       authKey?.accountId || accountId,
+  //       provider
   //     );
   //     const formattedTokenBalance = (
   //       rawTokenBalance * Math.pow(10, -tokenData?.decimals)
@@ -79,28 +79,6 @@ function TokenList({ selectToken, token }: Props) {
   // useEffect(() => {
   //   getAllTokensBalance(tokenListDB);
   // }, [tokenListDB]);
-
-  // //TODO:Refactor to make this a generic function
-  // async function getBalance(token_id: string, accountId: string) {
-  //   if (!token_id || !accountId) return;
-  //   try {
-  //     const getTokenBalance = await provider.query<CodeResult>({
-  //       request_type: 'call_function',
-  //       account_id: token_id,
-  //       method_name: 'ft_balance_of',
-  //       args_base64: Buffer.from(
-  //         JSON.stringify({ account_id: accountId })
-  //       ).toString('base64'),
-  //       finality: 'optimistic',
-  //     });
-  //     const userTokenBalance = JSON.parse(
-  //       Buffer.from(getTokenBalance.result).toString()
-  //     );
-  //     return userTokenBalance;
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
 
   const handleSearch = (e: any) => {
     const { value } = e.target;

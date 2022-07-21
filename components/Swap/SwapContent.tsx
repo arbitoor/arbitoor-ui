@@ -25,6 +25,7 @@ import SlippageSettings from '../SlippageSettings/SlippageSettings';
 import { useGlobalStore } from '../../utils/globalStore';
 import { TokenMetadata } from '../../utils/Database';
 import { useInMemoryProvider } from '../../hooks/useInMemoryProvider';
+import { getBalance } from '../../utils/helpers';
 
 /**
  * Returns a string representation of swap path
@@ -136,7 +137,8 @@ function SwapContent() {
     try {
       const getPaytokenBalance = await getBalance(
         payToken?.address,
-        authKey?.accountId || accountId
+        authKey?.accountId || accountId,
+        provider
       );
       if (payToken) {
         const resultPay = (
@@ -147,7 +149,8 @@ function SwapContent() {
 
       const getReceivetokenBalance = await getBalance(
         receiveToken?.address,
-        authKey?.accountId || accountId
+        authKey?.accountId || accountId,
+        provider
       );
       if (receiveToken) {
         const resultReceive = (
@@ -201,27 +204,6 @@ function SwapContent() {
         console.error(error);
         // setLoading(false);
       }
-    }
-  }
-
-  async function getBalance(token_id: string, accountId: string) {
-    if (!token_id || !accountId) return;
-    try {
-      const getTokenBalance = await provider.query<CodeResult>({
-        request_type: 'call_function',
-        account_id: token_id,
-        method_name: 'ft_balance_of',
-        args_base64: Buffer.from(
-          JSON.stringify({ account_id: accountId })
-        ).toString('base64'),
-        finality: 'optimistic',
-      });
-      const userTokenBalance = JSON.parse(
-        Buffer.from(getTokenBalance.result).toString()
-      );
-      return userTokenBalance;
-    } catch (error) {
-      console.log(error);
     }
   }
 
