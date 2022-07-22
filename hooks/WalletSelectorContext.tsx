@@ -78,7 +78,7 @@ export const WalletSelectorContextProvider = ({ children }: any) => {
           iconUrl: '/assets/walletSelector/my-near-wallet-icon.png',
         }),
         setupSender({
-          iconUrl: '/assets/walletSelector/sender-icon-latest.png',
+          iconUrl: '/assets/walletSelector/sender-icon.png',
         }),
         setupMathWallet({
           iconUrl: '/assets/walletSelector/math-wallet-icon.png',
