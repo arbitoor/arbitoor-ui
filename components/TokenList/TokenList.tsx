@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -18,8 +18,12 @@ import _ from 'lodash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { TokenMetadata } from '../../utils/Database';
+import { providers } from 'near-api-js';
 
 import { useGlobalStore } from '../../utils/globalStore';
+import { useWalletSelector } from '../../hooks/WalletSelectorContext';
+import { ftBalanceOf, getBalance } from '../../utils/helpers';
+import { useInMemoryProvider } from '../../hooks/useInMemoryProvider';
 // import { tokenList } from '../../utils/tokenList';
 // import { Token } from '../../types';
 
@@ -30,6 +34,12 @@ interface Props {
 
 function TokenList({ selectToken, token }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { selector, authKey, accountId } = useWalletSelector();
+
+  const { network } = selector.options;
+  const provider = new providers.JsonRpcProvider({
+    url: network.nodeUrl,
+  });
 
   const initialRef = React.useRef(null);
   const finalRef = React.useRef(null);
@@ -37,6 +47,38 @@ function TokenList({ selectToken, token }: Props) {
   const tokenListDB = useGlobalStore((state) => state.tokenListDB);
   const [filteredList, setFilteredList] =
     React.useState<TokenMetadata[]>(tokenListDB);
+
+  //TO Show Token balance in the tokenlist modal
+  // async function getAllTokensBalance(tokenList: any) {
+  //   const filteredData = [];
+
+  //   for (const tokenData of tokenList) {
+  //     const rawTokenBalance = await getBalance(
+  //       tokenData?.address,
+  //       authKey?.accountId || accountId,
+  //       provider
+  //     );
+  //     const formattedTokenBalance = (
+  //       rawTokenBalance * Math.pow(10, -tokenData?.decimals)
+  //     ).toString();
+  //     const tokenTicker = tokenData?.symbol;
+  //     const tickerName = tokenData?.name;
+  //     const logoURI = tokenData?.logoURI;
+
+  //     filteredData.push({
+  //       tokenTicker,
+  //       tickerName,
+  //       formattedTokenBalance,
+  //       logoURI,
+  //     });
+  //   }
+  //   console.log({ filteredData });
+  //   // setFilteredList(filteredData);
+  // }
+
+  // useEffect(() => {
+  //   getAllTokensBalance(tokenListDB);
+  // }, [tokenListDB]);
 
   const handleSearch = (e: any) => {
     const { value } = e.target;

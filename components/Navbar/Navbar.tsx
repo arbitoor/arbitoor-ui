@@ -11,8 +11,8 @@ import AccountDetails from '../AccountDetails/AccountDetails';
 import Sidebar from '../Sidebar/Sidebar';
 
 function Navbar() {
-  const { modal, authKey } = useWalletSelector();
-
+  const { modal, authKey, selector } = useWalletSelector();
+  const isSignedIn = selector.isSignedIn();
   const [isOpen, setIsOpen] = React.useState(false);
 
   const toggleSidebar = () => {
@@ -56,7 +56,7 @@ function Navbar() {
         justifyContent="flex-end"
         display={['none', 'none', 'none', 'flex']}
       >
-        {authKey ? (
+        {authKey || isSignedIn ? (
           <AccountDetails />
         ) : (
           <CustomButton
