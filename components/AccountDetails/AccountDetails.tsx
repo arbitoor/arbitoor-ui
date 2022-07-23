@@ -25,6 +25,7 @@ function AccountDetails() {
           width="20px"
         />
       </Flex>
+      <NearBalance />
       <Box
         fontWeight="normal"
         fontSize="14px"
@@ -36,7 +37,6 @@ function AccountDetails() {
         color="whitesmoke"
       >
         <Flex direction="column">
-          <NearBalance />
           <Text>{authKey?.accountId || accountId}</Text>
         </Flex>
       </Box>

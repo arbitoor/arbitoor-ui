@@ -33,7 +33,11 @@ function NearBalance() {
     }
   }, [isSignedIn]);
 
-  return <div>{nearBalance} NEAR</div>;
+  return (
+    <div style={{ fontSize: '14px', fontWeight: '500' }}>
+      {nearBalance} NEAR
+    </div>
+  );
 }
 
 export default NearBalance;
