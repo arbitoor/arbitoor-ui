@@ -49,10 +49,12 @@ function TokenList({ selectToken, token }: Props) {
     React.useState<TokenMetadata[]>(tokenListDB);
 
   //TO Show Token balance in the tokenlist modal
+
   // async function getAllTokensBalance(tokenList: any) {
   //   const filteredData = [];
 
   //   for (const tokenData of tokenList) {
+  // // getBalance function is a 'call' method which comsumes gas. Not optimum way to get all the balance in the list
   //     const rawTokenBalance = await getBalance(
   //       tokenData?.address,
   //       authKey?.accountId || accountId,

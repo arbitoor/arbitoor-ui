@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
 import { useWalletSelector } from '../../hooks/WalletSelectorContext';
 import Signout from './Signout';
+import NearBalance from './NearBalance';
 
 function AccountDetails() {
   const { authKey, accountId } = useWalletSelector();
@@ -25,7 +26,7 @@ function AccountDetails() {
         />
       </Flex>
       <Box
-        fontWeight="600"
+        fontWeight="normal"
         fontSize="14px"
         margin="0px 9px"
         whiteSpace="nowrap"
@@ -34,7 +35,10 @@ function AccountDetails() {
         textOverflow="ellipsis"
         color="whitesmoke"
       >
-        <Text>{authKey?.accountId || accountId}</Text>
+        <Flex direction="column">
+          <NearBalance />
+          <Text>{authKey?.accountId || accountId}</Text>
+        </Flex>
       </Box>
       <Flex minWidth="36px" justifyContent="center">
         <Signout />

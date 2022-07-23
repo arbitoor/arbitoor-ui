@@ -28,7 +28,7 @@ function Navbar() {
       alignItems="center"
       w="100%"
       p={['1rem 2rem', '1rem 2rem', '1rem 4rem', '1rem 4rem']}
-      fontWeight="600"
+      fontWeight="normal"
     >
       <Flex
         flex={['0.5', '0.5', '1 1 15%', '1 1 0%']}
