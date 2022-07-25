@@ -4,39 +4,40 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
 import { useWalletSelector } from '../../hooks/WalletSelectorContext';
 import Signout from './Signout';
+import NearBalance from './NearBalance';
 
 function AccountDetails() {
   const { authKey, accountId } = useWalletSelector();
 
   return (
     <Flex
-      padding="8px 6px"
-      background="#26262C"
+      // padding="10px 6px"
+      height="40px"
+      background="#101010"
       color="whitesmoke"
       alignItems="center"
       borderRadius="28px"
+      maxWidth="260px"
+      width="100%"
+      justifyContent="flex-end"
     >
-      <Flex minWidth="36px" justifyContent="center">
-        <FontAwesomeIcon
-          icon={faCircleUser}
-          color="whitesmoke"
-          height="20px"
-          width="20px"
-        />
-      </Flex>
-      <Box
-        fontWeight="600"
+      <NearBalance />
+      <Flex
+        fontWeight="normal"
         fontSize="14px"
-        margin="0px 9px"
+        margin="0px 6px"
         whiteSpace="nowrap"
-        maxWidth="150px"
         overflow="hidden"
         textOverflow="ellipsis"
         color="whitesmoke"
+        height="36px"
+        borderRadius="26px"
+        background="#26262C"
+        justifyContent="space-evenly"
+        alignItems="center"
+        minWidth="160px"
       >
         <Text>{authKey?.accountId || accountId}</Text>
-      </Box>
-      <Flex minWidth="36px" justifyContent="center">
         <Signout />
       </Flex>
     </Flex>
