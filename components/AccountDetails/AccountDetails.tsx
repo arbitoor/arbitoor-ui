@@ -13,7 +13,7 @@ function AccountDetails() {
     <Flex
       // padding="10px 6px"
       height="40px"
-      background="#26262C"
+      background="#101010"
       color="whitesmoke"
       alignItems="center"
       borderRadius="28px"
@@ -32,7 +32,7 @@ function AccountDetails() {
         color="whitesmoke"
         height="36px"
         borderRadius="26px"
-        background="#58585e"
+        background="#26262C"
         justifyContent="space-evenly"
         alignItems="center"
         minWidth="160px"
