@@ -11,36 +11,33 @@ function AccountDetails() {
 
   return (
     <Flex
-      padding="8px 6px"
+      // padding="10px 6px"
+      height="40px"
       background="#26262C"
       color="whitesmoke"
       alignItems="center"
       borderRadius="28px"
+      maxWidth="260px"
+      width="100%"
+      justifyContent="flex-end"
     >
-      <Flex minWidth="36px" justifyContent="center">
-        <FontAwesomeIcon
-          icon={faCircleUser}
-          color="whitesmoke"
-          height="20px"
-          width="20px"
-        />
-      </Flex>
       <NearBalance />
-      <Box
+      <Flex
         fontWeight="normal"
         fontSize="14px"
-        margin="0px 9px"
+        margin="0px 6px"
         whiteSpace="nowrap"
-        maxWidth="150px"
         overflow="hidden"
         textOverflow="ellipsis"
         color="whitesmoke"
+        height="36px"
+        borderRadius="26px"
+        background="#58585e"
+        justifyContent="space-evenly"
+        alignItems="center"
+        minWidth="160px"
       >
-        <Flex direction="column">
-          <Text>{authKey?.accountId || accountId}</Text>
-        </Flex>
-      </Box>
-      <Flex minWidth="36px" justifyContent="center">
+        <Text>{authKey?.accountId || accountId}</Text>
         <Signout />
       </Flex>
     </Flex>
