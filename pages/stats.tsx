@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  BarChart,
+  // BarChart,
   Bar,
   Cell,
   XAxis,
@@ -10,6 +10,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import BarChart from '../components/BarChart/BarChart';
 import { DexList, dexList } from '../utils/dexList';
 import { statsData } from '../utils/mockStatsData';
 
@@ -23,25 +24,25 @@ function stats() {
     // sortedData.push(data);
   }
 
-  const dexCount: Array<{name: string;count:number}> = [];
+  const dexCount: Array<{ name: string; value: number }> = [];
 
   for (const item of statsData) {
     const name = dexList[item.dex as keyof DexList].name;
-    let duplicateIdx = -1
-    dexCount.forEach((data: any, idx:number) => {
-      if(data.name === name){
-        duplicateIdx = idx
+    let duplicateIdx = -1;
+    dexCount.forEach((data: any, idx: number) => {
+      if (data.name === name) {
+        duplicateIdx = idx;
       }
     });
-    
-    if(duplicateIdx > -1){
-      dexCount[duplicateIdx].count += 1;
-      continue
+
+    if (duplicateIdx > -1) {
+      dexCount[duplicateIdx].value += 1;
+      continue;
     }
     dexCount.push({
       name,
-      count: 1
-    })
+      value: 1,
+    });
   }
 
   // console.log(sortedData);
@@ -56,7 +57,7 @@ function stats() {
       }}
     >
       {/* <ResponsiveContainer width="100%" height="100%"> */}
-      <BarChart
+      {/* <BarChart
         width={500}
         height={300}
         data={dexCount}
@@ -72,10 +73,19 @@ function stats() {
         <YAxis />
         <Tooltip />
         <Legend />
-        <Bar dataKey="count" fill="#8884d8" />
-        {/* <Bar dataKey="uv" fill="#82ca9d" /> */}
-      </BarChart>
+        <Bar dataKey="count" fill="#8884d8" />       
+      </BarChart> */}
       {/* </ResponsiveContainer> */}
+
+      <BarChart
+        data={dexCount}
+        // color={backgroundColor}
+        // minHeight={340}
+
+        // label={valueLabel}
+        // setValue={setLatestValue}
+        // setLabel={setValueLabel}
+      />
     </div>
   );
 }

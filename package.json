@@ -29,6 +29,7 @@
     "big.js": "^6.1.1",
     "bignumber.js": "^9.0.2",
     "comet-sdk": "^1.0.1",
+    "dayjs": "^1.11.4",
     "dexie": "^3.2.2",
     "dexie-react-hooks": "^1.1.1",
     "framer-motion": "^6",
