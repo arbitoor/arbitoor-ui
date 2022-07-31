@@ -44,7 +44,8 @@ function normalizeRoutesPath(actions: any, tokenList: TokenMetadata[]) {
           return savedToken.address == token;
         });
 
-        return saved ? saved.symbol : token.slice(0, 10);
+        // return saved ? saved.logoURI : token.slice(0, 10);
+        return saved ? saved.logoURI : '/assets/icons/cross.png';
       })
       .join(' --> ');
     if (routes[routes.length - 1] !== route) {
