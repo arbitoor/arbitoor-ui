@@ -118,8 +118,6 @@ export const WalletSelectorContextProvider = ({ children }: any) => {
     });
   }, [init]);
 
-  console.log('type', walletType);
-
   useEffect(() => {
     if (!selector) {
       return;
@@ -132,7 +130,7 @@ export const WalletSelectorContextProvider = ({ children }: any) => {
       )
       .subscribe((nextAccounts) => {
         // syncAccountState(accountId, nextAccounts);
-        console.log('Accounts Updte', nextAccounts);
+        // console.log('Accounts Updte', nextAccounts);
         setAccounts(nextAccounts);
       });
 
