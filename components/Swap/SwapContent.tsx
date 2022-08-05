@@ -112,7 +112,7 @@ function SwapContent() {
   });
 
   useEffect(() => {
-    if (+inputAmount > 0) {
+    if (+inputAmount > 0 && payToken !== receiveToken) {
       memoizedFetcher(inputAmount);
     }
   }, [payToken, receiveToken, inputAmount]);
@@ -377,8 +377,15 @@ function SwapContent() {
           />
 
           <TokenList selectToken={selectReceiveToken} token={receiveToken} />
-          {loading || !paths?.length || +inputAmount <= 0 ? (
-            <LoadingBestPrice display={+inputAmount <= 0 ? 'none' : 'flex'} />
+          {loading ||
+          !paths?.length ||
+          +inputAmount <= 0 ||
+          payToken === receiveToken ? (
+            <LoadingBestPrice
+              display={
+                +inputAmount <= 0 || payToken === receiveToken ? 'none' : 'flex'
+              }
+            />
           ) : (
             paths.length && (
               <BestPrice routes={paths as [RouteInfo, RouteInfo]} />
