@@ -17,12 +17,12 @@ import { statsData } from '../utils/mockStatsData';
 function stats() {
   const sortedData = [];
 
-  for (const data of statsData) {
-    const dexName = data.dex;
-    console.log(data);
+  // for (const data of statsData) {
+  //   const dexName = data.dex;
+  //   console.log(data);
 
-    // sortedData.push(data);
-  }
+  //   // sortedData.push(data);
+  // }
 
   const dexCount: Array<{ name: string; value: number }> = [];
 
@@ -45,7 +45,6 @@ function stats() {
     });
   }
 
-  // console.log(sortedData);
   return (
     <div
       style={{

@@ -2,6 +2,9 @@ import React, { Dispatch, SetStateAction, ReactNode } from 'react';
 import { BarChart, ResponsiveContainer, XAxis, Tooltip, Bar } from 'recharts';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
+import { useInMemoryProvider } from '../../hooks/useInMemoryProvider';
+import { topPools } from '../../utils/mockStatsData';
+
 // import styled from 'styled-components'
 // import Card from 'components/Card'
 // import { RowBetween } from 'components/Row'
@@ -74,6 +77,7 @@ const Chart = ({
 }: LineChartProps) => {
   // const theme = useTheme()
   const parsedValue = value;
+  const { memoizedInMemoryProvider } = useInMemoryProvider();
 
   return (
     // <Wrapper minHeight={minHeight} {...rest}>
