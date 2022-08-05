@@ -86,9 +86,9 @@ export const WalletSelectorContextProvider = ({ children }: any) => {
         setupMathWallet({
           iconUrl: '/assets/walletSelector/math-wallet-icon.png',
         }),
-        setupNightly({
-          iconUrl: '/assets/walletSelector/nightly.png',
-        }),
+        // setupNightly({
+        //   iconUrl: '/assets/walletSelector/nightly.png',
+        // }),
         setupLedger({
           iconUrl: '/assets/walletSelector/ledger-icon.png',
         }),
@@ -142,7 +142,7 @@ export const WalletSelectorContextProvider = ({ children }: any) => {
   }
 
   const accountId =
-    accounts.find((account) => account.active)?.accountId || null;
+    accounts.find((account) => account?.active)?.accountId || null;
 
   return (
     <WalletSelectorContext.Provider
