@@ -1,5 +1,6 @@
 import Big from 'big.js'
 import { Account } from 'near-api-js';
+import BigNumber from 'bignumber.js';
 import type { CodeResult, Provider } from 'near-api-js/lib/providers/provider';
 
 
@@ -57,3 +58,30 @@ export const getBalance = async (
     console.log(error);
   }
 }
+
+export function formatVol(value, decimalMap, tokenAddress) {
+  const decimals =
+    decimalMap.filter((tokenData) => {
+      return tokenData.address === tokenAddress;
+    })[0]?.decimals ?? 18;
+
+  return new BigNumber(10)
+    .pow(-decimals)
+    .multipliedBy(new BigNumber(value))
+    .toString();
+}
+export function formatTokenAdd(tokenMetaDataMap, tokenAddress) {
+  const tokenTicker =
+    tokenMetaDataMap.filter((tokenData) => {
+      return tokenData.address === tokenAddress;
+    })[0]?.symbol ?? tokenAddress.slice(0, 10);
+  // console.log({ tokenTicker });
+  return tokenTicker;
+}
+export function formatDexAdd(dexDataMap, dexAddress) {
+  return dexDataMap[dexAddress].name;
+  // return dexName;
+}
+
+export const formatAmount = (val) => `$` + val
+export const parseAmount = (val) => val.replace(/^\$/, '')

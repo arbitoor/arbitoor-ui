@@ -10,7 +10,7 @@ export function useInMemoryProvider() {
   const { network } = selector.options;
 
   const tokenListDB = useGlobalStore((state) => state.tokenListDB);
-  
+
   const [spinData, setSpinData] = React.useState<any>();
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
@@ -23,19 +23,50 @@ export function useInMemoryProvider() {
     return map;
   }, new Map<string, TokenMetadata>());
 
-  // async function fetchSpinData() {
-  //   const spinMarketData = await getSpinMarkets(provider);
-  //   const spinData = spinMarketData.filter(
-  //     (market: any) =>
-  //       market.base.symbol !== 'NEAR' && market.quote.symbol !== 'NEAR'
-  //   );
-  //   setSpinData(spinData);
-  //   setIsLoading(false);
-  // }
+  const inMemoryProvider = new InMemoryProvider(provider, tokenMap);
 
-  // useEffect(() => {
-  //   fetchSpinData();
-  // }, []);
+  function getTokensAddressFromPoolEndPoint(dexPoolData) {
+    let tokenAddresses: any = [];
+    for (const tokenData of dexPoolData) {
+      const { token_account_ids } = tokenData;
+      tokenAddresses.push(token_account_ids);
+    }
+    return tokenAddresses;
+  }
+  // function getTokensAddressFromSpinPool(spinPoolData) {
+  //   let tokenAddresses: any = [];
+  //   for (const tokenData of spinPoolData) {
+  //     const { base, quote } = tokenData;
+  //     tokenAddresses.push(base.address, quote.address);
+  //   }
+  //   console.log({ tokenAddresses });
+  //   // return tokenAddresses;
+  // }
+  // function getTokensAddressFromTonicPool(tonicPoolData) {
+  //   let tokenAddresses: any = [];
+  //   for (const tokenData of tonicPoolData) {
+  //     // const { token_account_ids } = tokenData;
+  //     // tokenAddresses.push(token_account_ids);
+  //   }
+  //   // return tokenAddresses;
+  // }
+  async function getPoolTokensMetaData(poolTokensAddressesArray) {
+    let poolTokenMetaData: any = [];
+    for (const metaData of poolTokensAddressesArray) {
+      const tokenMetaData = await getTokenMetaDataFromNetwork(metaData);
+      poolTokenMetaData.push(tokenMetaData);
+    }
+    return poolTokenMetaData;
+  }
+
+  async function getTokenMetaDataFromNetwork(tokensArray: string[]) {
+    let data: any = [];
+    for (const token of tokensArray) {
+      const metaData = await inMemoryProvider.getTokenMetadata(token);
+      data.push(metaData);
+    }
+    return data;
+  }
 
   const memoizedInMemoryProvider = React.useMemo(() => {
     return new InMemoryProvider(provider, tokenMap);

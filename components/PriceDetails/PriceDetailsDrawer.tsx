@@ -1,14 +1,58 @@
 import React from 'react';
-import { Box, chakra, Button, Flex, Text } from '@chakra-ui/react';
+import { Box, chakra, Button, Flex, Text, Image } from '@chakra-ui/react';
 import { useGlobalStore } from '../../utils/globalStore';
 import { percentToNumber } from '../../utils/helpers';
 import { toPrecision } from '@arbitoor/arbitoor-core';
+// import Image from 'next/image';
 
 function PriceDetailsDrawer() {
   const paths = useGlobalStore((state) => state.paths);
   const slippageValue = useGlobalStore((state) => state.slippageValue);
 
   const minReceivedAmount = +paths[0]?.output - percentToNumber(slippageValue);
+
+  function renderRouteArrow(idx) {
+    if (idx !== 1) {
+      return (
+        <Image
+          alt="rightarrow"
+          src={'/assets/icons/arrowRight.svg'}
+          width="50px"
+          height={5}
+          borderRadius="12px"
+          fill={'white'}
+        />
+      );
+    }
+
+    return null;
+  }
+
+  function renderRoute(routeStr) {
+    const routeArr = routeStr.split(' --> ');
+
+    return (
+      <div
+        style={{ display: 'flex', alignItems: 'center', marginBottom: '6px' }}
+      >
+        {routeArr.map((route, key) => {
+          return (
+            <>
+              {renderRouteArrow(key + 1)}
+              <Image
+                key={key}
+                alt="tickLogo"
+                src={route || '/assets/icons/cross.png'}
+                width="24px"
+                height="24px"
+                borderRadius="12px"
+              />
+            </>
+          );
+        })}
+      </div>
+    );
+  }
 
   return (
     <>
@@ -50,7 +94,11 @@ function PriceDetailsDrawer() {
                 {paths.length
                   ? paths[0].routePercentage?.map(
                       (pecent: string, idx: number) => {
-                        return <Text key={idx}>{pecent}%</Text>;
+                        return (
+                          <Text key={idx} marginBottom="6px">
+                            {pecent}%
+                          </Text>
+                        );
                       }
                     )
                   : '--'}
@@ -59,7 +107,12 @@ function PriceDetailsDrawer() {
                 <Box flex={['1 0 45%', '1 0 55%', '1 0 65%', '1 0 65%']}>
                   {paths.length
                     ? paths[0].path?.map((ticker: string, idx: number) => {
-                        return <Text key={idx}>{ticker}</Text>;
+                        return (
+                          <div key={idx} style={{ display: 'flex' }}>
+                            {renderRoute(ticker)}
+                            {/* <Text key={idx}>{ticker}</Text>; */}
+                          </div>
+                        );
                       })
                     : '--'}
                 </Box>

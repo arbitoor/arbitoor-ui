@@ -10,52 +10,15 @@ import { useGlobalStore } from '../../utils/globalStore';
 function SwapBody() {
   const inputAmount = useGlobalStore((state) => state.inputAmount);
   const paths = useGlobalStore((state) => state.paths);
-  const [tokenListDB, setTokenListDB] = useGlobalStore((state) => [
-    state.tokenListDB,
-    state.setTokenListDB,
-  ]);
 
   const [show, setShow] = React.useState<boolean>(false);
-  const [tokenList, setTokenList] = React.useState<TokenInfo[]>([]);
   const [loading, setLoading] = React.useState<boolean>();
 
   const togglePriceDetailsDrawer = () => {
     setShow(!show);
   };
 
-  useEffect(() => {
-    if (!tokenListDB.length) {
-      setLoading(true);
-    } else {
-      setLoading(false);
-    }
-  }, [tokenListDB]);
-
-  useEffect(() => {
-    db.tokensMetadata.clear();
-    new TokenListProvider().resolve().then((tokens) => {
-      const tokenList = tokens.filterByNearEnv('mainnet').getList();
-      setTokenList(tokenList);
-    });
-  }, []);
-
-  useEffect(() => {
-    addTokens();
-    getTokensDataFromDB();
-  }, [tokenList]);
-
   // const tokensCount = useLiveQuery(() => db.tokensMetadata.count());
-
-  async function getTokensDataFromDB() {
-    return await db.tokensMetadata
-      .toCollection()
-      .toArray()
-      .then((data) => setTokenListDB(data));
-  }
-
-  async function addTokens() {
-    await db.tokensMetadata.bulkPut(tokenList);
-  }
 
   return (
     <Flex

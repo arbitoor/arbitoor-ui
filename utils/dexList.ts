@@ -12,6 +12,11 @@ export interface DexList {
     icon: string;
     name: string
   }
+  ,
+  'v1.orderbook.near': {
+    icon: string;
+    name: string
+  }
 }
 
 export const dexList = {
