@@ -3,7 +3,7 @@ import { BarChart, ResponsiveContainer, XAxis, Tooltip, Bar } from 'recharts';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { useInMemoryProvider } from '../../hooks/useInMemoryProvider';
-import { topPools } from '../../utils/mockStatsData';
+
 
 // import styled from 'styled-components'
 // import Card from 'components/Card'
