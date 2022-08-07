@@ -11,54 +11,58 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import format from 'format-number';
-import { getTokensDataByVol24H } from '../../../utils/analyticServices';
-import { formatTokenAdd, formatVol } from '../../../utils/helpers';
 import ChartTitle from '../ChartTitle/ChartTitle';
 import { useGlobalStore } from '../../../utils/globalStore';
 import { toPrecision } from '@arbitoor/arbitoor-core';
+import { getDexListByVol24H } from '../../../utils/analyticServices';
+import { dexList } from '../../../utils/dexList';
+import { formatDexAdd } from '../../../utils/helpers';
 
-function TopTokensByVol() {
-  const [topTokensByVol, setTopTokensByVol] = React.useState<Array<any>>([]);
-  const tokenListDB = useGlobalStore((state) => state.tokenListDB);
+function TopDexByVol() {
+  const [topDexByVol, setTopDexByVol] = React.useState<Array<any>>([]);
 
-  async function topTokensDataFetcher() {
-    const data = await getTokensDataByVol24H();
+  async function topDexListFetcher() {
+    const data = await getDexListByVol24H();
 
-    let topTokens: any = [];
-    for (const tx of data) {
-      const res: any = tx.reduce((acc, curr, idx) => {
+    let topDexs: any = [];
+
+    for (const dexData of data) {
+      const res = dexData.reduce((acc, curr, idx) => {
         if (idx === 0) {
-          acc['tokenAddress'] = formatTokenAdd(tokenListDB, curr);
+          acc['dexName'] = formatDexAdd(dexList, curr);
         }
         if (idx === 1) {
-          acc['volume'] = formatVol(+curr, tokenListDB, acc.tokenAddress);
+          acc['volume'] = curr;
         }
         return acc;
       }, {});
-      topTokens.push(res);
+      topDexs.push(res);
     }
-    const result = topTokens.sort((a, b) => b.volume - a.volume);
-    setTopTokensByVol(result);
+
+    const result = topDexs.sort((a, b) => b.volume - a.volume);
+    setTopDexByVol(result);
   }
 
   useEffect(() => {
-    topTokensDataFetcher();
+    topDexListFetcher();
   }, []);
+
+  console.log({ topDexByVol });
 
   return (
     <React.Fragment>
-      <ChartTitle title="Top Tokens" />
+      <ChartTitle title="Top Pool Providers" />
       <TableContainer>
         <Table variant="striped" colorScheme="blackAlpha" color="white">
           <Thead>
             <Tr>
               <Th>Rank</Th>
-              <Th>Token</Th>
+              <Th>Pool Provider</Th>
               <Th isNumeric>24H Volume</Th>
             </Tr>
           </Thead>
           <Tbody>
-            {topTokensByVol.map((data, idx) => {
+            {topDexByVol.map((data, idx) => {
               const formatConfig = format({
                 prefix: '$',
               });
@@ -69,7 +73,7 @@ function TopTokensByVol() {
                 <React.Fragment key={idx}>
                   <Tr>
                     <Td>{idx + 1}</Td>
-                    <Td>{data?.tokenAddress}</Td>
+                    <Td>{data?.dexName}</Td>
                     <Td isNumeric>{formattedAmount}</Td>
                   </Tr>
                 </React.Fragment>
@@ -82,4 +86,4 @@ function TopTokensByVol() {
   );
 }
 
-export default TopTokensByVol;
+export default TopDexByVol;
