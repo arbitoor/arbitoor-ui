@@ -32,6 +32,7 @@
     "dayjs": "^1.11.4",
     "dexie": "^3.2.2",
     "dexie-react-hooks": "^1.1.1",
+    "format-number": "^3.0.0",
     "framer-motion": "^6",
     "lodash": "^4.17.21",
     "mathjs": "^10.6.1",
