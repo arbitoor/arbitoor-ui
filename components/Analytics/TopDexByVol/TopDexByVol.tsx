@@ -47,8 +47,6 @@ function TopDexByVol() {
     topDexListFetcher();
   }, []);
 
-  console.log({ topDexByVol });
-
   return (
     <React.Fragment>
       <ChartTitle title="Top Pool Providers" />
