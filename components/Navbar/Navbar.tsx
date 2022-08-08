@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useWalletSelector } from '../../hooks/WalletSelectorContext';
 import AccountDetails from '../AccountDetails/AccountDetails';
 import Sidebar from '../Sidebar/Sidebar';
+import { CONTRACT_ID } from '../../utils/constants';
 
 function Navbar() {
   const { modal, authKey, selector } = useWalletSelector();

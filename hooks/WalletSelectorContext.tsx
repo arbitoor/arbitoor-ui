@@ -5,6 +5,7 @@ import { setupModal } from '@near-wallet-selector/modal-ui';
 import { setupNearWallet } from '@near-wallet-selector/near-wallet';
 import { setupSender } from '@near-wallet-selector/sender';
 import { setupMathWallet } from '@near-wallet-selector/math-wallet';
+import { setupNightly } from '@near-wallet-selector/nightly';
 import { setupLedger } from '@near-wallet-selector/ledger';
 import { setupMyNearWallet } from '@near-wallet-selector/my-near-wallet';
 import type { WalletSelector, AccountState } from '@near-wallet-selector/core';
@@ -27,7 +28,8 @@ interface WalletSelectorContextValue {
   modal: WalletSelectorModal;
   accounts: Array<AccountState>;
   accountId: string | null;
-  setAccountId: (accountId: string) => void;
+  walletType: string | null;
+  // setAccountId: (accountId: string) => void;
   authKey: any;
   setAuthKey: any;
 }
@@ -38,33 +40,34 @@ const WalletSelectorContext =
 export const WalletSelectorContextProvider = ({ children }: any) => {
   const [selector, setSelector] = useState<WalletSelector | null>(null);
   const [modal, setModal] = useState<WalletSelectorModal | null>(null);
-  const [accountId, setAccountId] = useState<string | null>(null);
   const [accounts, setAccounts] = useState<Array<AccountState>>([]);
+  const [walletType, setWalletType] = useState<string | null>(null);
+  // const [accountId, setAccountId] = useState<string | null>(null);
   const [authKey, setAuthKey] = useState<any>();
 
-  const syncAccountState = (
-    currentAccountId: string | null,
-    newAccounts: Array<AccountState>
-  ) => {
-    if (!newAccounts.length) {
-      localStorage.removeItem('accountId');
-      setAccountId(null);
-      setAccounts([]);
+  // const syncAccountState = (
+  //   currentAccountId: string | null,
+  //   newAccounts: Array<AccountState>
+  // ) => {
+  //   if (!newAccounts.length) {
+  //     localStorage.removeItem('accountId');
+  //     setAccountId(null);
+  //     setAccounts([]);
 
-      return;
-    }
+  //     return;
+  //   }
 
-    const validAccountId =
-      currentAccountId &&
-      newAccounts.some((x) => x.accountId === currentAccountId);
-    const newAccountId = validAccountId
-      ? currentAccountId
-      : newAccounts[0].accountId;
+  //   const validAccountId =
+  //     currentAccountId &&
+  //     newAccounts.some((x) => x.accountId === currentAccountId);
+  //   const newAccountId = validAccountId
+  //     ? currentAccountId
+  //     : newAccounts[0].accountId;
 
-    localStorage.setItem('accountId', newAccountId);
-    setAccountId(newAccountId);
-    setAccounts(newAccounts);
-  };
+  //   localStorage.setItem('accountId', newAccountId);
+  //   setAccountId(newAccountId);
+  //   setAccounts(newAccounts);
+  // };
 
   const init = useCallback(async () => {
     const _selector = await setupWalletSelector({
@@ -83,6 +86,9 @@ export const WalletSelectorContextProvider = ({ children }: any) => {
         setupMathWallet({
           iconUrl: '/assets/walletSelector/math-wallet-icon.png',
         }),
+        // setupNightly({
+        //   iconUrl: '/assets/walletSelector/nightly.png',
+        // }),
         setupLedger({
           iconUrl: '/assets/walletSelector/ledger-icon.png',
         }),
@@ -92,12 +98,14 @@ export const WalletSelectorContextProvider = ({ children }: any) => {
     const _modal = setupModal(_selector, { contractId: CONTRACT_ID });
     const state = _selector.store.getState();
 
-    syncAccountState(localStorage.getItem('accountId'), state.accounts);
+    // syncAccountState(localStorage.getItem('accountId'), state.accounts);
+    setAccounts(state.accounts);
 
     window.selector = _selector;
     window.modal = _modal;
     //@ts-ignore
     setAuthKey(JSON.parse(localStorage.getItem('near_app_wallet_auth_key')));
+    setWalletType(state?.selectedWalletId);
 
     setSelector(_selector);
     setModal(_modal);
@@ -121,15 +129,20 @@ export const WalletSelectorContextProvider = ({ children }: any) => {
         distinctUntilChanged()
       )
       .subscribe((nextAccounts) => {
-        syncAccountState(accountId, nextAccounts);
+        // syncAccountState(accountId, nextAccounts);
+        // console.log('Accounts Updte', nextAccounts);
+        setAccounts(nextAccounts);
       });
 
     return () => subscription.unsubscribe();
-  }, [selector, accountId]);
+  }, [selector]);
 
   if (!selector || !modal) {
     return null;
   }
+
+  const accountId =
+    accounts.find((account) => account?.active)?.accountId || null;
 
   return (
     <WalletSelectorContext.Provider
@@ -139,7 +152,7 @@ export const WalletSelectorContextProvider = ({ children }: any) => {
         authKey,
         accounts,
         accountId,
-        setAccountId,
+        walletType,
         setAuthKey,
       }}
     >
