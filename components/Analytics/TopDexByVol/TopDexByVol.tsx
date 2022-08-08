@@ -61,7 +61,7 @@ function TopDexByVol() {
             </Tr>
           </Thead>
           <Tbody>
-            {!topDexByVol ? (
+            {topDexByVol ? (
               topDexByVol.map((data, idx) => {
                 const formatConfig = format({
                   prefix: '$',

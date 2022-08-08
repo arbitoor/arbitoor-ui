@@ -236,7 +236,7 @@ function TokenList({ selectToken, token }: Props) {
                                 height="28px"
                                 borderRadius="12px"
                               />
-                              <Flex width="100%">
+                              <Flex width="100%" marginLeft="12px">
                                 <Flex direction="column">
                                   <Text>{token.symbol}</Text>
                                   <Text fontSize="12px">{token.name}</Text>
