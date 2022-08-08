@@ -24,6 +24,7 @@ import { useGlobalStore } from '../../utils/globalStore';
 import { useWalletSelector } from '../../hooks/WalletSelectorContext';
 import { ftBalanceOf, getBalance } from '../../utils/helpers';
 import { useInMemoryProvider } from '../../hooks/useInMemoryProvider';
+import { toPrecision } from '@arbitoor/arbitoor-core';
 // import { tokenList } from '../../utils/tokenList';
 // import { Token } from '../../types';
 
@@ -37,9 +38,11 @@ function TokenList({ selectToken, token }: Props) {
   const { selector, authKey, accountId } = useWalletSelector();
 
   const { network } = selector.options;
-  const provider = new providers.JsonRpcProvider({
-    url: network.nodeUrl,
-  });
+  const provider = React.useMemo(() => {
+    return new providers.JsonRpcProvider({
+      url: network.nodeUrl,
+    });
+  }, [network]);
 
   const initialRef = React.useRef(null);
   const finalRef = React.useRef(null);
@@ -49,38 +52,6 @@ function TokenList({ selectToken, token }: Props) {
     React.useState<TokenMetadata[]>(tokenListDB);
 
   //TO Show Token balance in the tokenlist modal
-
-  // async function getAllTokensBalance(tokenList: any) {
-  //   const filteredData = [];
-
-  //   for (const tokenData of tokenList) {
-  // // getBalance function is a 'call' method which comsumes gas. Not optimum way to get all the balance in the list
-  //     const rawTokenBalance = await getBalance(
-  //       tokenData?.address,
-  //       authKey?.accountId || accountId,
-  //       provider
-  //     );
-  //     const formattedTokenBalance = (
-  //       rawTokenBalance * Math.pow(10, -tokenData?.decimals)
-  //     ).toString();
-  //     const tokenTicker = tokenData?.symbol;
-  //     const tickerName = tokenData?.name;
-  //     const logoURI = tokenData?.logoURI;
-
-  //     filteredData.push({
-  //       tokenTicker,
-  //       tickerName,
-  //       formattedTokenBalance,
-  //       logoURI,
-  //     });
-  //   }
-  //   console.log({ filteredData });
-  //   // setFilteredList(filteredData);
-  // }
-
-  // useEffect(() => {
-  //   getAllTokensBalance(tokenListDB);
-  // }, [tokenListDB]);
 
   const handleSearch = (e: any) => {
     const { value } = e.target;
@@ -95,6 +66,35 @@ function TokenList({ selectToken, token }: Props) {
 
     setFilteredList(filteredData);
   };
+
+  useEffect(() => {
+    if (selector.isSignedIn()) {
+      getAllTokensBalance(filteredList);
+    }
+  }, []);
+
+  const getAllTokensBalance = React.useCallback(
+    async (tokenList: any) => {
+      let filteredData = [...tokenList];
+
+      for (const tokenData of filteredData) {
+        // getBalance function is a 'call' method which comsumes gas. Not optimum way to get all the balance in the list
+        const rawTokenBalance = await getBalance(
+          tokenData?.address,
+          authKey?.accountId || accountId,
+          provider
+        );
+        const formattedTokenBalance = toPrecision(
+          (rawTokenBalance * Math.pow(10, -tokenData?.decimals)).toString(),
+          2
+        );
+        tokenData['balance'] = formattedTokenBalance;
+      }
+
+      setFilteredList(filteredData);
+    },
+    [authKey, accountId, provider]
+  );
 
   return (
     <>
@@ -197,6 +197,7 @@ function TokenList({ selectToken, token }: Props) {
                   maxH="75vh"
                   color="black"
                   overflowY="scroll"
+                  cursor="pointer"
                   css={{
                     '&::-webkit-scrollbar': {
                       width: '6px',
@@ -221,12 +222,13 @@ function TokenList({ selectToken, token }: Props) {
                             color="whitesmoke"
                             _hover={{ bgColor: '#de8f1761' }}
                             padding="14px 48px"
+                            width="100%"
                             onClick={() => {
                               selectToken(token);
                               setFilteredList(tokenListDB);
                             }}
                           >
-                            <Flex>
+                            <Flex width="100%">
                               <Image
                                 alt="ticker logo"
                                 src={token.logoURI || '/assets/icons/cross.png'}
@@ -234,12 +236,13 @@ function TokenList({ selectToken, token }: Props) {
                                 height="28px"
                                 borderRadius="12px"
                               />
-                              <Flex>
+                              <Flex width="100%">
                                 <Flex direction="column">
                                   <Text>{token.symbol}</Text>
                                   <Text fontSize="12px">{token.name}</Text>
                                 </Flex>
                               </Flex>
+                              <Text>{token.balance}</Text>
                             </Flex>
                           </Box>
                         </chakra.a>

@@ -18,7 +18,7 @@ export interface TokenMetadata {
   spec: string;
   tokenTicker?: string | undefined;
   tickerName?: string | undefined;
-  formattedTokenBalance?: string | undefined;
+  balance?: string | undefined;
 }
 
 class IndexedDb extends Dexie {
