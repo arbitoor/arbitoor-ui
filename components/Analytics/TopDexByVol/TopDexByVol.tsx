@@ -8,6 +8,7 @@ import {
   Th,
   Thead,
   Tr,
+  Text,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import format from 'format-number';
@@ -60,23 +61,27 @@ function TopDexByVol() {
             </Tr>
           </Thead>
           <Tbody>
-            {topDexByVol.map((data, idx) => {
-              const formatConfig = format({
-                prefix: '$',
-              });
-              const formattedAmount = formatConfig(
-                +toPrecision(data?.volume, 2)
-              );
-              return (
-                <React.Fragment key={idx}>
-                  <Tr>
-                    <Td>{idx + 1}</Td>
-                    <Td>{data?.dexName}</Td>
-                    <Td isNumeric>{formattedAmount}</Td>
-                  </Tr>
-                </React.Fragment>
-              );
-            })}
+            {!topDexByVol ? (
+              topDexByVol.map((data, idx) => {
+                const formatConfig = format({
+                  prefix: '$',
+                });
+                const formattedAmount = formatConfig(
+                  +toPrecision(data?.volume, 2)
+                );
+                return (
+                  <React.Fragment key={idx}>
+                    <Tr>
+                      <Td>{idx + 1}</Td>
+                      <Td>{data?.dexName}</Td>
+                      <Td isNumeric>{formattedAmount}</Td>
+                    </Tr>
+                  </React.Fragment>
+                );
+              })
+            ) : (
+              <Text>No Data Found</Text>
+            )}
           </Tbody>
         </Table>
       </TableContainer>
