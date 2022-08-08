@@ -1,0 +1,15 @@
+[[redirects]]
+  from  = "/api/"
+  to = "http://ec2-3-110-106-65.ap-south-1.compute.amazonaws.com:5000"
+  status = 200
+
+  [[redirects]]
+  from  = "/api/tokens-volume/past-24H"
+  to = "http://ec2-3-110-106-65.ap-south-1.compute.amazonaws.com:5000/tokens-volume/past-24H"
+  status = 200
+
+[[redirects]]
+  from  = "/api/dexes-volume/past-24h"
+  to = "http://ec2-3-110-106-65.ap-south-1.compute.amazonaws.com:5000/dexes-volume/past-24h"
+  status = 200
+
