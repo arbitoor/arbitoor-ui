@@ -1,5 +1,5 @@
 [[redirects]]
-  from  = "/api/"
+  from  = "/api"
   to = "http://ec2-3-110-106-65.ap-south-1.compute.amazonaws.com:5000"
   status = 200
 
